@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genera app.css</title>
+<!-- Tailwind serve solo qui, per generare il CSS una volta: l'app usa il file app.css già pronto -->
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          apple: { blue: '#007AFF', bluedark: '#0056b3', gray: '#F2F2F7', text: '#1D1D1F', textsec: '#86868B' }
+        },
+        fontFamily: {
+          sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+        }
+      }
+    }
+  }
+</script>
+<style>body { font-family: sans-serif; padding: 2rem; }</style>
+</head>
+<body>
+<h1>Genero app.css…</h1>
+<p id="out">Leggo index.html e preparo gli stili usati dall'app.</p>
+<div id="probe" style="display:none"></div>
+<script>
+(async () => {
+  const out = document.getElementById('out');
+  try {
+    const src = await (await fetch('../index.html', { cache: 'no-store' })).text();
+    // Ogni "parola" del file è una possibile classe (anche quelle scritte dentro il JavaScript):
+    // Tailwind genera il CSS solo per quelle valide e ignora le altre.
+    const tokens = new Set(src.split(/[\s"'`<>{}]+/).filter(t => t && t.length < 120 && /^[!-~]+$/.test(t)));
+    document.getElementById('probe').className = [...tokens].join(' ');
+    await new Promise(r => setTimeout(r, 2000));
+    const css = [...document.querySelectorAll('style')].map(s => s.textContent).filter(t => t.includes('--tw-')).join('\n');
+    if (!css) throw new Error('Tailwind non ha generato CSS (sei online?)');
+    const res = await fetch('/__save_css', { method: 'POST', headers: { 'Content-Type': 'text/css' }, body: css });
+    out.textContent = res.ok ? `✅ app.css salvato (${tokens.size} parole analizzate). Puoi chiudere questa pagina.` : '❌ Salvataggio non riuscito: avvia la pagina con tools/build_css.py';
+  } catch (e) {
+    out.textContent = '❌ ' + e.message;
+  }
+})();
+</script>
+</body>
+</html>
