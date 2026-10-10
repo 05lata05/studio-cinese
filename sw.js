@@ -3,11 +3,12 @@
 // Copre sia i file del sito sia gli script CDN esterni (Tailwind, HanziWriter), cosi' l'app
 // funziona anche offline una volta aperta la prima volta.
 
-const CACHE_NAME = 'studio-cinese-v2'; // aumentare (v2, v3, ...) ad ogni aggiornamento dei file
+const CACHE_NAME = 'studio-cinese-v3'; // aumentare (v2, v3, ...) ad ogni aggiornamento dei file
 
 const APP_SHELL = [
   './',
   './index.html',
+  './tongji_data.js',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
