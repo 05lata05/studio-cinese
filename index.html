@@ -189,6 +189,10 @@
 <!-- MODALE LOGIN PROFILI -->
 <div id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle" class="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-[1000] p-4 transition-opacity">
   <div class="bg-white/90 backdrop-blur-2xl p-8 rounded-3xl shadow-2xl border border-white max-w-sm w-full text-center">
+    <div class="flex justify-center gap-2 mb-5" role="group" aria-label="Lingua / Language">
+      <button type="button" data-lang-choice="it" onclick="window.setLanguage('it')" lang="it" class="px-4 py-2 rounded-full text-sm font-semibold transition bg-gray-100 text-apple-text">🇮🇹 Italiano</button>
+      <button type="button" data-lang-choice="en" onclick="window.setLanguage('en')" lang="en" class="px-4 py-2 rounded-full text-sm font-semibold transition bg-gray-100 text-apple-text">🇬🇧 English</button>
+    </div>
     <div class="text-5xl mb-4" aria-hidden="true">👤</div>
     <h3 id="loginTitle" class="text-2xl font-bold text-apple-text mb-2 tracking-tight">Benvenuto!</h3>
     <p class="text-apple-textsec text-sm mb-6">Inserisci il tuo nome per accedere al tuo profilo e ai tuoi salvataggi isolati.</p>
@@ -763,13 +767,19 @@
   </div>
 </div>
 
-<!-- Contenuti del corso Tongji (generati da tongji_src/build.py) -->
+<!-- Contenuti del corso Tongji (generati da tongji_src/build.py) e testi dell'interfaccia in inglese -->
 <script src="tongji_data.js"></script>
+<script src="tongji_en.js"></script>
+<script src="i18n_en.js"></script>
 
 <!-- ================= JAVASCRIPT GLOBALE ================= -->
 <script>
 // State
-window.currentLang = (() => { try { return localStorage.getItem('studioCinese_lang') === 'en' ? 'en' : 'it'; } catch (e) { return 'it'; } })();
+// Lingua: quella scelta l'ultima volta, altrimenti quella del browser (italiano se è italiano, se no inglese)
+window.currentLang = (() => {
+  try { const s = localStorage.getItem('studioCinese_lang'); if (s === 'it' || s === 'en') return s; } catch (e) { /* storage non disponibile */ }
+  return /^it\b/i.test(navigator.language || 'it') ? 'it' : 'en';
+})();
 window.audioRate = 0.85;
 window.srsData = {};        // ripasso intelligente: chiave parola → { b: livello, d: giorno di scadenza, n, l, t, ok, f }
 window.lessonProgress = {}; // risposte per lezione: idDispositivo → { lezione → { argomento → [giuste, totali] } }
@@ -1385,15 +1395,15 @@ const qaData = [
   { q: { it: "Se la domanda è 「你平时几点起床？」, qual è la risposta logica?", en: "If the question is 「你平时几点起床？」, what is the logical answer?" }, py: "nǐ píngshí jǐ diǎn qǐchuáng?", opts: ["我平时七点起床。", "我在学校。", "我喜欢睡觉。", "今天星期一。"], a: 0, itExp: "La domanda chiede a che ora ci si alza di solito.", enExp: "The question asks what time you usually get up." },
   { q: { it: "Se la domanda è 「你今天晚上想吃什么？」, qual è la risposta logica?", en: "If the question is 「你今天晚上想吃什么？」, what is the logical answer?" }, py: "nǐ jīntiān wǎnshang xiǎng chī shénme?", opts: ["我想吃意大利菜。", "我每天起床。", "现在三点。", "我在学校。"], a: 0, itExp: "La domanda chiede cosa si vuole mangiare stasera.", enExp: "The question asks what you want to eat tonight." },
   { q: { it: "Se la domanda è 「你有时候去电影院吗？」, qual è la risposta logica?", en: "If the question is 「你有时候去电影院吗？」, what is the logical answer?" }, py: "nǐ yǒu shíhòu qù diànyǐngyuàn ma?", opts: ["有时候去，有时候不去。", "我在食堂吃饭。", "今天是星期天。", "我喝咖啡。"], a: 0, itExp: "La domanda chiede se a volte si va al cinema.", enExp: "The question asks if you sometimes go to the cinema." },
-  { q: { it: "Se qualcuno dice 「糟糕！」, cosa vuol dire?", en: "If someone says 「糟糕！」, what does it mean?" }, py: "zāogāo!", opts: ["Oh no! / Che guaio!", "Ciao!", "Grazie!", "Prego!"], a: 0, itExp: "'糟糕' è un'esclamazione che esprime frustrazione o guaio.", enExp: "'糟糕' is an exclamation expressing frustration or trouble." },
+  { q: { it: "Se qualcuno dice 「糟糕！」, cosa vuol dire?", en: "If someone says 「糟糕！」, what does it mean?" }, py: "zāogāo!", opts: ["Oh no! / Che guaio!", "Ciao!", "Grazie!", "Prego!"], enOpts: ["Oh no! / What a mess!", "Hi!", "Thank you!", "You’re welcome!"], a: 0, itExp: "'糟糕' è un'esclamazione che esprime frustrazione o guaio.", enExp: "'糟糕' is an exclamation expressing frustration or trouble." },
   { q: { it: "Se la domanda è 「你平时做什么？」, qual è la risposta logica?", en: "If the question is 「你平时做什么？」, what is the logical answer?" }, py: "nǐ píngshí zuò shénme?", opts: ["我平时看书。", "我叫王家明。", "我是学生。", "我很好。"], a: 0, itExp: "Si chiede cosa si fa 'di solito' (平时).", enExp: "Asking what you 'usually' do (平时)." },
   { q: { it: "Se qualcuno ti dice 「祝你生日快乐！」, cosa rispondi?", en: "If someone says 「祝你生日快乐！」, what do you answer?" }, py: "zhù nǐ shēngrì kuàilè!", opts: ["谢谢！", "没关系。", "不客气。", "糟糕！"], a: 0, itExp: "Agli auguri si risponde sempre con 'Grazie' (谢谢).", enExp: "To wishes, you always answer 'Thank you' (谢谢)." },
   // ─── Lezione 18: Completamento HSK1 ──────────────────────────────────────────
   { q: { it: "Se la domanda è 「你住在哪儿？」, qual è la risposta logica?", en: "If the question is 「你住在哪儿？」, what is the logical answer?" }, py: "nǐ zhù zài nǎr?", opts: ["我住在北京。", "我姓王。", "我很好。", "我是学生。"], a: 0, itExp: "La domanda chiede dove si abita (住在哪儿).", enExp: "The question asks where you live (住在哪儿)." },
   { q: { it: "Se la domanda è 「今天天气怎么样？」, qual è la risposta logica?", en: "If the question is 「今天天气怎么样？」, what is the logical answer?" }, py: "jīntiān tiānqì zěnmeyàng?", opts: ["今天很冷。", "我很高兴。", "他是医生。", "现在两点。"], a: 0, itExp: "La domanda chiede com'è il tempo oggi.", enExp: "The question asks how the weather is today." },
-  { q: { it: "Se qualcuno risponde al telefono dicendo 「喂？」, cosa significa?", en: "If someone answers the phone saying 「喂？」, what does it mean?" }, py: "wèi?", opts: ["Pronto?", "Grazie!", "Arrivederci!", "Prego."], a: 0, itExp: "'喂' si usa per rispondere al telefono.", enExp: "'喂' is used to answer the phone." },
+  { q: { it: "Se qualcuno risponde al telefono dicendo 「喂？」, cosa significa?", en: "If someone answers the phone saying 「喂？」, what does it mean?" }, py: "wèi?", opts: ["Pronto?", "Grazie!", "Arrivederci!", "Prego."], enOpts: ["Hello? (on the phone)", "Thank you!", "Goodbye!", "You’re welcome."], a: 0, itExp: "'喂' si usa per rispondere al telefono.", enExp: "'喂' is used to answer the phone." },
   { q: { it: "Se la domanda è 「你有没有钱？」, qual è la risposta logica?", en: "If the question is 「你有没有钱？」, what is the logical answer?" }, py: "nǐ yǒu méiyǒu qián?", opts: ["我没有钱。", "我没有猫。", "我不喝茶。", "我不是学生。"], a: 0, itExp: "La domanda chiede se hai dei soldi (钱).", enExp: "The question asks if you have money (钱)." },
-  { q: { it: "Se qualcuno ti chiede 「你能不能来？」, cosa ti sta chiedendo?", en: "If someone asks you 「你能不能来？」, what are they asking?" }, py: "nǐ néng bu néng lái?", opts: ["Se puoi venire.", "Se sai nuotare.", "Se hai fame.", "Che ore sono."], a: 0, itExp: "'能' esprime la possibilità di fare qualcosa.", enExp: "'能' expresses the possibility of doing something." },
+  { q: { it: "Se qualcuno ti chiede 「你能不能来？」, cosa ti sta chiedendo?", en: "If someone asks you 「你能不能来？」, what are they asking?" }, py: "nǐ néng bu néng lái?", opts: ["Se puoi venire.", "Se sai nuotare.", "Se hai fame.", "Che ore sono."], enOpts: ["Whether you can come.", "Whether you can swim.", "Whether you are hungry.", "What time it is."], a: 0, itExp: "'能' esprime la possibilità di fare qualcosa.", enExp: "'能' expresses the possibility of doing something." },
   { q: { it: "Se la risposta è 「我二十岁。」, qual è la domanda?", en: "If the answer is 「我二十岁。」, what is the question?" }, py: "wǒ èrshí suì.", opts: ["你多大？", "你叫什么名字？", "你住在哪儿？", "现在几点？"], a: 0, itExp: "La risposta indica un'età (岁).", enExp: "The answer indicates an age (岁)." }
 ];
 
@@ -1563,6 +1573,47 @@ const escHtml = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '
 const sayText = s => String(s || '').replace(/\s*[\/·]\s*/g, '，').replace(/——/g, '，'); // testo pulito per la sintesi vocale
 const wkey = v => v.key || v.zh; // chiave delle statistiche: gli omografi del Tongji (得 de/dé/děi…) restano distinti
 
+// ─── Lingua dell'interfaccia: italiano (originale) o inglese ─────────────────
+// t('testo italiano', {var}) restituisce la traduzione di i18n_en.js; tr() fa lo stesso per i testi del corso Tongji.
+const I18N = window.I18N_EN || {};
+const missingI18n = new Set();
+function t(s, vars) {
+  let out = s;
+  if (window.currentLang === 'en' && s) {
+    if (I18N[s] != null) out = I18N[s];
+    else if (/[a-zà-ù]{3}/i.test(s)) missingI18n.add(s);
+  }
+  if (vars) out = String(out).replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
+  return out;
+}
+const tr = s => (window.currentLang === 'en' && window.TONGJI_EN && window.TONGJI_EN[s]) || s;
+window.i18nMissing = () => [...missingI18n]; // per controllare le traduzioni mancanti dalla console
+
+// Traduce i testi fissi della pagina (e i loro placeholder/title/aria-label), ricordando l'originale italiano
+const i18nOrig = new WeakMap();
+function translateStatic(root = document.body) {
+  const en = window.currentLang === 'en';
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode: n => /^(SCRIPT|STYLE)$/.test(n.parentElement ? n.parentElement.tagName : '') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT
+  });
+  for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+    if (!i18nOrig.has(n)) i18nOrig.set(n, n.nodeValue);
+    const orig = i18nOrig.get(n), key = orig.replace(/\s+/g, ' ').trim();
+    if (!key) continue;
+    const val = en ? I18N[key] : null;
+    if (val != null) { const m = orig.match(/^(\s*)[\s\S]*?(\s*)$/); n.nodeValue = m[1] + val + m[2]; }
+    else if (n.nodeValue !== orig) n.nodeValue = orig;
+  }
+  root.querySelectorAll('[placeholder],[title],[aria-label]').forEach(el => {
+    [['placeholder', 'i18nPh'], ['title', 'i18nTitle'], ['aria-label', 'i18nAria']].forEach(([a, k]) => {
+      if (!el.hasAttribute(a)) return;
+      if (!(k in el.dataset)) el.dataset[k] = el.getAttribute(a);
+      const orig = el.dataset[k], val = en ? I18N[orig] : null;
+      el.setAttribute(a, val != null ? val : orig);
+    });
+  });
+}
+
 // ─── Corsi: Politecnico (l'app originale) e Tongji (初级汉语口语 1) ────────────
 window.currentCourse  = 'polimi';
 window.courseSettings = {};   // impostazioni del corso attivo (lezione attuale, parole supplementari)
@@ -1631,7 +1682,7 @@ window.loginUser = function () {
   if (!name) return;
   window.currentUser = name;
   $id('loginModal').style.display = 'none';
-  $id('authText').innerText = 'Profilo: ' + name;
+  $id('authText').innerText = t('Profilo: {name}', { name });
   loadProfile();
   window.pendingLoginSync = true; // dopo la scelta del corso, sincronizza (se attivo)
   window.openCourseModal(true);
@@ -1641,6 +1692,7 @@ window.logoutUser = function () {
   flushSave();
   closeActiveQuizzes();
   window.currentUser = null;
+  $id('authText').innerText = t('Non loggato');
   $id('courseModal').style.display = 'none';
   $id('loginModal').style.display = 'flex';
   $id('usernameInput').value = '';
@@ -1663,7 +1715,7 @@ window.openCourseModal = function (afterLogin = false) {
     const on = id === highlighted;
     btn.classList.toggle('ring-2', on); btn.classList.toggle('ring-apple-blue', on);
     const badge = btn.querySelector('.course-badge');
-    badge.innerText = afterLogin ? 'Ultimo usato' : 'Attivo';
+    badge.innerText = t(afterLogin ? 'Ultimo usato' : 'Attivo');
     badge.classList.toggle('hidden', !on);
   });
   $id('courseModalClose').classList.toggle('hidden', afterLogin);
@@ -1681,7 +1733,7 @@ window.selectCourse = function (id) {
   $id('courseModal').style.display = 'none';
   window.lessonViewState.n = null;
   window.loadFromLocal();
-  renderCourseChrome();
+  renderCourseChrome(true);
   window.refreshSyncStatus();
   window.scrollTo({ top: 0, behavior: 'smooth' });
   if (window.pendingLoginSync) { window.pendingLoginSync = false; if (lsGet(SYNC_AUTO_KEY)) window.syncNow(true); }
@@ -1696,23 +1748,23 @@ function closeActiveQuizzes() {
 }
 
 // Titolo, pulsante corso, sezioni e filtri che cambiano tra un corso e l'altro
-function renderCourseChrome() {
+function renderCourseChrome(openLessons = false) {
   const C = course();
-  $id('appTitle').innerText    = C.title;
-  $id('appSubtitle').innerText = C.subtitle;
+  $id('appTitle').innerText    = t(C.title);
+  $id('appSubtitle').innerText = t(C.subtitle);
   $id('courseSwitchBtn').innerText = `${C.icon} ${C.short}`;
   ['courseBar', 'lessonsSection', 'mqRangeRow', 'fcQuickRange'].forEach(id => $id(id).classList.toggle('hidden', !C.hasLessons));
-  $id('mqCategory').innerHTML = C.mqCategories.map(([v, l]) => `<option value="${v}">${l}</option>`).join('');
-  $id('mqSettingsDesc').innerText = C.mqDesc;
+  $id('mqCategory').innerHTML = C.mqCategories.map(([v, l]) => `<option value="${v}">${escHtml(t(l))}</option>`).join('');
+  $id('mqSettingsDesc').innerText = t(C.mqDesc);
   if (C.hasLessons) {
     const lessons = window.TONGJI_DATA.lessons;
-    $id('currentLessonSelect').innerHTML = lessons.map(l => `<option value="${l.n}">Lezione ${l.n} · ${escHtml(l.zh)}</option>`).join('');
+    $id('currentLessonSelect').innerHTML = lessons.map(l => `<option value="${l.n}">${t('Lezione {n}', { n: l.n })} · ${escHtml(l.zh)}</option>`).join('');
     $id('currentLessonSelect').value = curLesson();
-    const shortOpts = lessons.map(l => `<option value="${l.n}">Lezione ${l.n}</option>`).join('');
+    const shortOpts = lessons.map(l => `<option value="${l.n}">${t('Lezione {n}', { n: l.n })}</option>`).join('');
     $id('mqFrom').innerHTML = shortOpts; $id('mqTo').innerHTML = shortOpts;
     $id('suppToggle').checked = window.courseSettings.includeSupp !== false;
     window.mqQuickRange('upto');
-    if ($id('sec-lessons').classList.contains('hidden')) window.toggleSection('sec-lessons', 'icon-lessons');
+    if (openLessons && $id('sec-lessons').classList.contains('hidden')) window.toggleSection('sec-lessons', 'icon-lessons');
   }
 }
 
@@ -1726,7 +1778,7 @@ window.setCurrentLesson = function (n) {
   $id('quizLessonCheckboxes').dataset.course = ''; // la selezione del Memory torna a "1 → lezione attuale"
   window.lessonViewState.n = n;
   window.refreshUI();
-  window.showToast(`📍 Lezione attuale: ${n}. Quiz e flashcard partono dalle lezioni 1–${n}.`, 'success');
+  window.showToast(t('📍 Lezione attuale: {n}. Quiz e flashcard partono dalle lezioni 1–{n}.', { n }), 'success');
 };
 
 window.setIncludeSupp = function (on) {
@@ -1830,7 +1882,10 @@ function recordActivity(n = 1) {
   const goal = window.profileData.goal || 20, k = dayKey(), before = dayCount(k);
   const mine = window.profileData.days[DEVICE_ID] = window.profileData.days[DEVICE_ID] || {};
   mine[k] = (mine[k] || 0) + n;
-  if (before < goal && before + n >= goal) window.showToast(`🎯 Obiettivo di oggi raggiunto! 🔥 Serie: ${streakDays()} ${streakDays() === 1 ? 'giorno' : 'giorni'}`, 'success');
+  if (before < goal && before + n >= goal) {
+    const sd = streakDays();
+    window.showToast(t(sd === 1 ? '🎯 Obiettivo di oggi raggiunto! 🔥 Serie: {n} giorno' : '🎯 Obiettivo di oggi raggiunto! 🔥 Serie: {n} giorni', { n: sd }), 'success');
+  }
   saveProfile();
   window.renderGoalBar();
 }
@@ -1882,16 +1937,19 @@ window.renderGoalBar = function () {
   if (!window.currentUser) { hide(bar); return; }
   show(bar);
   const goal = window.profileData.goal || 20, done = dayCount(dayKey()), pct = Math.min(100, Math.round(done / goal * 100));
-  $id('goalText').innerText = done >= goal ? `✅ Fatto! ${done} risposte oggi (obiettivo ${goal})` : `${done} / ${goal} risposte oggi`;
+  $id('goalText').innerText = done >= goal ? t('✅ Fatto! {done} risposte oggi (obiettivo {goal})', { done, goal }) : t('{done} / {goal} risposte oggi', { done, goal });
   $id('goalFill').style.width = pct + '%';
   $id('goalProgress').setAttribute('aria-valuemax', goal); $id('goalProgress').setAttribute('aria-valuenow', Math.min(done, goal));
   const streak = streakDays();
   $id('streakText').innerText = `🔥 ${streak}`;
   $id('goalSelect').value = String(goal);
   const { due, fresh, studied } = srsQueue();
-  const label = `🧠 Ripasso di oggi (${due.length + fresh.length})`;
+  const label = t('🧠 Ripasso di oggi ({n})', { n: due.length + fresh.length });
   $id('srsTodayBtn').innerText = label; $id('fcDailyBtn').innerText = label;
-  $id('srsSummary').innerText = `${due.length} ${due.length === 1 ? 'parola' : 'parole'} da ripassare e ${fresh.length} nuove per oggi · ${studied} parole del ${course().name} nel ripasso intelligente.`;
+  $id('srsSummary').innerText = t(due.length === 1
+    ? '{due} parola da ripassare e {fresh} nuove per oggi · {studied} parole del {course} nel ripasso intelligente.'
+    : '{due} parole da ripassare e {fresh} nuove per oggi · {studied} parole del {course} nel ripasso intelligente.',
+    { due: due.length, fresh: fresh.length, studied, course: t(course().name) });
 };
 
 // ─── Progressi per lezione ────────────────────────────────────────────────────
@@ -1949,7 +2007,7 @@ window.startMistakesReview = function () {
 function renderMistakesBtn() {
   const btn = $id('mqMistakesBtn'); if (!btn) return;
   const n = activeMistakes().length;
-  btn.innerText = n ? `🔁 Ripeti gli errori (${n})` : '🔁 Nessun errore da ripetere';
+  btn.innerText = n ? t('🔁 Ripeti gli errori ({n})', { n }) : t('🔁 Nessun errore da ripetere');
   btn.disabled = !n; btn.classList.toggle('opacity-60', !n);
 }
 
@@ -1988,7 +2046,7 @@ window.importBackup = function (event) {
     try { data = JSON.parse(e.target.result); } catch { window.showToast('File non valido!', 'error'); return; }
     const from = data.course || 'polimi'; // i backup precedenti ai due corsi sono del Politecnico
     if (from !== window.currentCourse) {
-      window.showToast(`Questo backup è del ${(COURSES[from] || {}).name || from}: passa a quel corso per importarlo.`, 'error');
+      window.showToast(t('Questo backup è del {name}: passa a quel corso per importarlo.', { name: t((COURSES[from] || {}).name || from) }), 'error');
       return;
     }
     applyStoragePayload(data);
@@ -2057,40 +2115,52 @@ window.showToast = function (message, type = 'info') {
   const bg = bgMap[type] || 'bg-[#007AFF]/90';
   const toast = document.createElement('div');
   toast.className = `p-4 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] backdrop-blur-xl border border-white/40 text-white font-semibold transition-all duration-400 transform translate-y-10 opacity-0 pointer-events-auto flex items-center justify-center text-center w-full max-w-sm ${bg}`;
-  toast.innerText = message;
+  toast.innerText = message = t(message); // i messaggi fissi vengono tradotti qui
   container.appendChild(toast);
   const duration = Math.max(3000, message.length * 55); // i messaggi lunghi restano visibili più a lungo
   setTimeout(() => toast.classList.remove('translate-y-10', 'opacity-0'), 50);
   setTimeout(() => { toast.classList.add('translate-y-10', 'opacity-0'); setTimeout(() => toast.remove(), 400); }, duration);
 };
 
-// ─── Lingua dei significati (italiano / inglese) e tema ──────────────────────
-// I vocaboli hanno sia il significato italiano sia quello inglese; interfaccia e spiegazioni restano in italiano.
+// ─── Lingua dell'app (italiano / inglese) e tema ──────────────────────────────
+// In inglese cambiano interfaccia, spiegazioni, esercizi e significati dei vocaboli.
 const isEn = () => window.currentLang === 'en';
 function getNativeString(item) { return (isEn() && item.en) ? item.en : item.it; }
 
 function applyLanguageChrome() {
   const en = isEn(), btn = $id('langBtn');
+  document.documentElement.lang = en ? 'en' : 'it';
+  translateStatic();
   btn.innerText = en ? 'EN' : 'IT';
-  btn.setAttribute('aria-label', en ? 'Significati dei vocaboli in inglese: passa all’italiano' : 'Significati dei vocaboli in italiano: passa all’inglese');
-  $id('thNative').innerText = en ? 'English' : 'Italiano';
-  ['fcQuizMode', 'frontMode', 'backMode'].forEach(id => $id(id).querySelectorAll('option').forEach(o => {
-    o.text = en ? o.text.replace(/\bIta\b/g, 'Eng') : o.text.replace(/\bEng\b/g, 'Ita');
-  }));
+  btn.title = en ? 'Language: English / Italian' : 'Lingua: italiano / inglese';
+  btn.setAttribute('aria-label', en ? 'Language: English. Switch to Italian' : 'Lingua: italiano. Passa all’inglese');
+  if (window.currentUser) $id('authText').innerText = t('Profilo: {name}', { name: window.currentUser });
+  document.title = t('Studio Cinese by Luigi Latagliata');
+  document.querySelectorAll('[data-lang-choice]').forEach(b => {
+    const on = b.dataset.langChoice === window.currentLang;
+    b.setAttribute('aria-pressed', String(on));
+    b.classList.toggle('bg-apple-blue', on); b.classList.toggle('text-white', on);
+    b.classList.toggle('bg-gray-100', !on); b.classList.toggle('text-apple-text', !on);
+  });
+  applyThemeChrome();
 }
 
-window.toggleLanguage = function () {
-  window.currentLang = isEn() ? 'it' : 'en';
+window.toggleLanguage = () => window.setLanguage(isEn() ? 'it' : 'en');
+window.setLanguage = function (lang) {
+  if (lang !== 'it' && lang !== 'en') return;
+  window.currentLang = lang;
   lsSet('studioCinese_lang', window.currentLang);
   applyLanguageChrome();
-  window.refreshUI();
-  window.showToast(isEn() ? 'Significati dei vocaboli in inglese (flashcard, tabella, traduzioni). Interfaccia e spiegazioni restano in italiano.' : 'Significati dei vocaboli in italiano.', 'info');
+  window.refreshGroqKeyStatus(); window.refreshSyncStatus();
+  if (window.currentUser) { renderCourseChrome(); window.refreshUI(); }
+  if (window.megaQuizState && window.megaQuizState.active) window.renderMegaQuizQuestion();
 };
 
 function applyThemeChrome() {
   const dark = document.documentElement.classList.contains('dark'), btn = $id('themeBtn');
   btn.innerText = dark ? '☀️' : '🌙';
-  btn.setAttribute('aria-label', dark ? 'Attiva tema chiaro' : 'Attiva tema scuro');
+  btn.setAttribute('aria-label', t(dark ? 'Attiva tema chiaro' : 'Attiva tema scuro'));
+  btn.title = t('Tema chiaro / scuro');
   document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#0B0B0D' : '#f5f5f7');
 }
 window.toggleTheme = function () {
@@ -2137,7 +2207,7 @@ function buildPolimiQuiz() {
     const optsObj = c.opts.map((opt, i) => ({ text: opt, isCorrect: i === c.a }));
     shuffle(optsObj);
     expanded.push({
-      q: { it: `Completamento: ${c.zh}\n(${(en && c.enHint) || c.itHint})` },
+      q: { it: `${t('Completamento')}: ${c.zh}\n(${(en && c.enHint) || c.itHint})` },
       o: optsObj.map(o => o.text),
       a: optsObj.findIndex(o => o.isCorrect),
       c: 'Completamento',
@@ -2159,11 +2229,11 @@ function buildPolimiQuiz() {
     const optsObj = [meaning, ...distractors].map(text => ({ it: text, isCorrect: text === meaning }));
     shuffle(optsObj);
     expanded.push({
-      q: { it: `Traduzione: "${v.zh}"` },
+      q: { it: `${t('Traduzione')}: "${v.zh}"` },
       oObj: optsObj,
       a: optsObj.findIndex(o => o.isCorrect),
       c: 'Traduzione Mix',
-      e: { it: `${v.zh} (${v.py}) significa "${meaning}".` },
+      e: { it: t('{zh} ({py}) significa "{m}".', { zh: v.zh, py: v.py, m: meaning }) },
       pyHint: v.py,
       audioText: v.zh,
       vkey: wkey(v)
@@ -2173,11 +2243,11 @@ function buildPolimiQuiz() {
   // Riordina Frasi
   reorderSentences.forEach(r => {
     expanded.push({
-      q: { it: `Riordina i caratteri:\n\n"${(en && r.en) || r.it}"` },
+      q: { it: `${t('Riordina i caratteri:')}\n\n"${(en && r.en) || r.it}"` },
       words: r.words,
       correctOrder: r.zh,
       c: 'Riordina Frasi',
-      e: { it: `Corretta: ${r.zh}` },
+      e: { it: `${t('Corretta:')} ${r.zh}` },
       pyHint: r.py,
       audioText: r.zh
     });
@@ -2185,7 +2255,7 @@ function buildPolimiQuiz() {
 
   // Domanda / Risposta
   qaData.forEach(q => {
-    const optsObj = q.opts.map((opt, i) => ({ text: opt, isCorrect: i === q.a }));
+    const optsObj = ((en && q.enOpts) || q.opts).map((opt, i) => ({ text: opt, isCorrect: i === q.a }));
     shuffle(optsObj);
     const chineseMatch = q.q.it.match(/「(.*?)」/);
     expanded.push({
@@ -2206,7 +2276,7 @@ function buildPolimiQuiz() {
       words: d.lines,
       correctOrder: d.lines.join(''),
       c: 'Riordina Discorso',
-      e: { it: 'Ordine logico.' },
+      e: { it: t('Ordine logico.') },
       pyHint: d.py,
       isDialogue: true,
       audioText: d.lines.join('。')
@@ -2219,12 +2289,12 @@ function buildPolimiQuiz() {
       const optsObj = qItem.o.map((opt, i) => ({ text: opt, isCorrect: i === qItem.a }));
       shuffle(optsObj);
       expanded.push({
-        q: { it: `Testo:\n${r.text}\n\nDomanda: ${qItem.text}` },
+        q: { it: `${t('Testo:')}\n${r.text}\n\n${t('Domanda:')} ${qItem.text}` },
         o: optsObj.map(o => o.text),
         a: optsObj.findIndex(o => o.isCorrect),
         c: r.title,
-        e: { it: 'La risposta corretta è nel testo.' },
-        pyHint: `Testo Pinyin:\n${r.py}\n\nDomanda Pinyin: ${qItem.py}\n\nOpzioni:\n${optsObj.map((o, i) => `${i + 1}. ${o.text}`).join('\n')}`,
+        e: { it: t('La risposta corretta è nel testo.') },
+        pyHint: `${t('Testo Pinyin:')}\n${r.py}\n\n${t('Domanda Pinyin:')} ${qItem.py}\n\n${t('Opzioni:')}\n${optsObj.map((o, i) => `${i + 1}. ${o.text}`).join('\n')}`,
         audioText: r.text
       });
     });
@@ -2290,19 +2360,19 @@ function buildTongjiQuiz(from = 1, to = maxLesson()) {
   const distractorPool = vocab.length >= 12 ? vocab : allVocab;
 
   T.cloze.forEach(([n, zh, py, it, opts, exp]) => {
-    if (inR(n)) out.push({ les: n, c: 'Completamento', q: { it: `Completamento: ${zh}\n(${it})` }, ...mcOptions(opts),
-      e: { it: exp }, pyHint: py, audioText: zh.replace(/\s*___\s*/g, '…') });
+    if (inR(n)) out.push({ les: n, c: 'Completamento', q: { it: `${t('Completamento')}: ${zh}\n(${tr(it)})` }, ...mcOptions(opts.map(tr)),
+      e: { it: tr(exp) }, pyHint: py, audioText: zh.replace(/\s*___\s*/g, '…') });
   });
 
   T.reorder.forEach(([n, zh, py, it, words]) => {
-    if (inR(n)) out.push({ les: n, c: 'Riordina Frasi', q: { it: `Riordina le parole:\n\n"${it}"` }, words, correctOrder: zh,
-      e: { it: `Corretta: ${zh}\n${py}` }, pyHint: py, audioText: zh });
+    if (inR(n)) out.push({ les: n, c: 'Riordina Frasi', q: { it: `${t('Riordina le parole:')}\n\n"${tr(it)}"` }, words, correctOrder: zh,
+      e: { it: `${t('Corretta:')} ${zh}\n${py}` }, pyHint: py, audioText: zh });
   });
 
   T.qa.forEach(([n, text, py, opts, exp]) => {
     if (!inR(n)) return;
     const m = text.match(/「(.*?)」/);
-    out.push({ les: n, c: 'Domanda/Risposta', q: { it: text }, ...mcOptions(opts), e: { it: exp }, pyHint: py || null, audioText: m ? m[1] : '' });
+    out.push({ les: n, c: 'Domanda/Risposta', q: { it: tr(text) }, ...mcOptions(opts.map(tr)), e: { it: tr(exp) }, pyHint: py || null, audioText: m ? m[1] : '' });
   });
 
   T.lessons.forEach(L => {
@@ -2310,14 +2380,14 @@ function buildTongjiQuiz(from = 1, to = maxLesson()) {
     if (L.dialogue && L.dialogue.reorder) {
       dialogueChunks(L.dialogue.lines).forEach(chunk => {
         const lines = chunk.map(l => `${l[0]}：${l[2]}`);
-        out.push({ les: L.n, c: 'Riordina Dialogo', q: { it: `Riordina il dialogo (Lezione ${L.n}):\n${L.dialogue.scene}` },
+        out.push({ les: L.n, c: 'Riordina Dialogo', q: { it: `${t('Riordina il dialogo (Lezione {n}):', { n: L.n })}\n${tr(L.dialogue.scene)}` },
           words: lines, correctOrder: lines.join(''), isDialogue: true,
-          e: { it: chunk.map(l => `${l[1]}: ${l[4]}`).join('\n') }, pyHint: `Prima battuta: ${chunk[0][3]}`, audioText: chunk.map(l => l[2]).join('') });
+          e: { it: chunk.map(l => `${tr(l[1])}: ${tr(l[4])}`).join('\n') }, pyHint: `${t('Prima battuta:')} ${chunk[0][3]}`, audioText: chunk.map(l => l[2]).join('') });
       });
     }
     if (L.reading) L.reading.q.forEach(([qzh, qpy, opts]) => {
-      out.push({ les: L.n, c: 'Lettura', q: { it: `📖 ${L.reading.title}\n\n${L.reading.zh}\n\nDomanda: ${qzh}` }, ...mcOptions(opts),
-        e: { it: `Traduzione del testo: ${L.reading.it}` }, pyHint: `Testo:\n${L.reading.py}\n\nDomanda: ${qpy}`, audioText: L.reading.zh });
+      out.push({ les: L.n, c: 'Lettura', q: { it: `📖 ${tr(L.reading.title)}\n\n${L.reading.zh}\n\n${t('Domanda:')} ${qzh}` }, ...mcOptions(opts.map(tr)),
+        e: { it: `${t('Traduzione del testo:')} ${tr(L.reading.it)}` }, pyHint: `${t('Testo:')}\n${L.reading.py}\n\n${t('Domanda:')} ${qpy}`, audioText: L.reading.zh });
     });
   });
 
@@ -2325,27 +2395,27 @@ function buildTongjiQuiz(from = 1, to = maxLesson()) {
   vocab.forEach(v => {
     const k = wkey(v); // ogni risposta su un vocabolo aggiorna anche il ripasso intelligente
     if (Math.random() < 0.5) {
-      out.push({ les: v.lesson, vkey: k, c: 'Traduzione Mix', q: { it: `Traduzione: "${v.zh}"` }, ...mcOptions([nat(v), ...pickDistractors(v, distractorPool, nat)]),
-        e: { it: `${v.zh} (${v.py}) significa "${nat(v)}".` }, pyHint: v.py, audioText: v.zh });
+      out.push({ les: v.lesson, vkey: k, c: 'Traduzione Mix', q: { it: `${t('Traduzione')}: "${v.zh}"` }, ...mcOptions([nat(v), ...pickDistractors(v, distractorPool, nat)]),
+        e: { it: t('{zh} ({py}) significa "{m}".', { zh: v.zh, py: v.py, m: nat(v) }) }, pyHint: v.py, audioText: v.zh });
     } else {
-      out.push({ les: v.lesson, vkey: k, c: 'Traduzione Mix', q: { it: `Come si dice in cinese: "${nat(v)}"?` }, ...mcOptions([v.zh, ...pickDistractors(v, distractorPool, getZh)]),
+      out.push({ les: v.lesson, vkey: k, c: 'Traduzione Mix', q: { it: t('Come si dice in cinese: "{m}"?', { m: nat(v) }) }, ...mcOptions([v.zh, ...pickDistractors(v, distractorPool, getZh)]),
         e: { it: `"${nat(v)}" = ${v.zh} (${v.py}).` }, pyHint: null, audioText: '' });
     }
-    out.push({ les: v.lesson, vkey: k, c: 'Ascolto', q: { it: 'Ascolto: premi 🔊 (in alto a destra) e scegli il significato giusto.' },
+    out.push({ les: v.lesson, vkey: k, c: 'Ascolto', q: { it: t('Ascolto: premi 🔊 (in alto a destra) e scegli il significato giusto.') },
       ...mcOptions([nat(v), ...pickDistractors(v, distractorPool, nat)]),
-      e: { it: `Hai sentito ${v.zh} (${v.py}) = "${nat(v)}".` }, pyHint: v.py, audioText: v.zh, autoPlay: true });
+      e: { it: t('Hai sentito {zh} ({py}) = "{m}".', { zh: v.zh, py: v.py, m: nat(v) }) }, pyHint: v.py, audioText: v.zh, autoPlay: true });
     const wrong = toneDistractors(v.py);
-    if (wrong.length === 3) out.push({ les: v.lesson, vkey: k, c: 'Pinyin e toni', q: { it: `Pinyin e toni: come si legge "${v.zh}"?\n(${nat(v)})` },
-      ...mcOptions([v.py, ...wrong]), e: { it: `${v.zh} si legge ${v.py}.` }, pyHint: null, audioText: v.zh });
+    if (wrong.length === 3) out.push({ les: v.lesson, vkey: k, c: 'Pinyin e toni', q: { it: `${t('Pinyin e toni: come si legge "{zh}"?', { zh: v.zh })}\n(${nat(v)})` },
+      ...mcOptions([v.py, ...wrong]), e: { it: t('{zh} si legge {py}.', { zh: v.zh, py: v.py }) }, pyHint: null, audioText: v.zh });
   });
 
   const byZh = {};
   allVocab.forEach(v => { if (!byZh[v.zh]) byZh[v.zh] = v; });
   T.measure.forEach(([noun, mws]) => {
     const v = byZh[noun]; if (!v || !inR(v.lesson)) return;
-    out.push({ les: v.lesson, c: 'Classificatori', q: { it: `Classificatori: quale si usa con "${noun}" (${nat(v)})?\n\n一 ___ ${noun}` },
+    out.push({ les: v.lesson, c: 'Classificatori', q: { it: `${t('Classificatori: quale si usa con "{noun}" ({m})?', { noun, m: nat(v) })}\n\n一 ___ ${noun}` },
       ...mcOptions([mws[0], ...shuffle(T.mwPool.filter(m => !mws.includes(m))).slice(0, 3)]),
-      e: { it: `Con ${noun} si usa ${mws.join(' / ')}.` }, pyHint: v.py, audioText: '' });
+      e: { it: t('Con {noun} si usa {mws}.', { noun, mws: mws.join(' / ') }) }, pyHint: v.py, audioText: '' });
   });
   return out;
 }
@@ -2382,7 +2452,8 @@ window.updateMqPoolInfo = function () {
   const cat = getVal('mqCategory', 'all');
   let pool = buildTongjiQuiz(r[0], r[1]);
   if (cat !== 'all') pool = pool.filter(q => q.c === cat);
-  info.innerText = `${pool.length} domande disponibili ${r[0] === r[1] ? `nella lezione ${r[0]}` : `nelle lezioni ${r[0]}–${r[1]}`}.`;
+  info.innerText = r[0] === r[1] ? t('{n} domande disponibili nella lezione {a}.', { n: pool.length, a: r[0] })
+    : t('{n} domande disponibili nelle lezioni {a}–{b}.', { n: pool.length, a: r[0], b: r[1] });
 };
 
 // ─── Sorting ──────────────────────────────────────────────────────────────────
@@ -2408,7 +2479,7 @@ function getSortedData(data, sortMode) {
 // ─── Filters ──────────────────────────────────────────────────────────────────
 window.updateCategoryFilter = function () {
   const categories = [...new Set(window.getCombinedVocab().map(i => i.cat))].sort((a, b) => a.localeCompare(b));
-  const html = '<option value="all">Tutte</option>' + categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+  const html = `<option value="all">${t('Tutte')}</option>` + categories.map(cat => `<option value="${escHtml(cat)}">${escHtml(t(cat))}</option>`).join('');
   ['fcCategoryFilter', 'quizCategory'].forEach(id => {
     const sel = $id(id);
     if (!sel) return;
@@ -2422,9 +2493,9 @@ window.updateLessonFilters = function () {
   const vocab = window.getCombinedVocab();
   const numericLessons = [...new Set(vocab.filter(i => typeof i.lesson === 'number').map(i => i.lesson))].sort((a, b) => a - b);
   const hasCustom = vocab.some(i => i.lesson === 'custom');
-  let html = '<option value="all">Tutte le Lezioni</option>';
-  if (course().hasLessons) html += `<option value="upto">Lezioni 1–${curLesson()} (fino all’attuale)</option>`;
-  numericLessons.forEach(l => { html += `<option value="${l}">Lezione ${l}</option>`; });
+  let html = `<option value="all">${t('Tutte le Lezioni')}</option>`;
+  if (course().hasLessons) html += `<option value="upto">${t('Lezioni 1–{n} (fino all’attuale)', { n: curLesson() })}</option>`;
+  numericLessons.forEach(l => { html += `<option value="${l}">${t('Lezione {n}', { n: l })}</option>`; });
   if (hasCustom) html += '<option value="custom">Cloud</option>';
 
   ['fcLessonFilter', 'tableLessonFilter'].forEach(id => {
@@ -2442,7 +2513,7 @@ window.updateLessonFilters = function () {
     ? new Set(Array.from(qCbContainer.querySelectorAll('.quiz-les-cb:checked')).map(c => c.value)) : null;
   const isChecked = v => prevChecked ? prevChecked.has(String(v)) : (!course().hasLessons || v === 'custom' || v <= curLesson());
   const cbLabel = (v, text) => `<label class="inline-flex items-center bg-white border border-gray-200 text-apple-text px-3.5 py-2 rounded-xl cursor-pointer hover:bg-gray-50 text-xs transition shadow-sm font-medium"><input type="checkbox" value="${v}" class="quiz-les-cb mr-2 accent-apple-blue w-4 h-4" onchange="window.checkQuizLessonAll()" ${isChecked(v) ? 'checked' : ''}> ${text}</label>`;
-  let qHtml = `<label class="inline-flex items-center bg-apple-blue text-white font-semibold px-3.5 py-2 rounded-xl cursor-pointer text-xs transition shadow-sm"><input type="checkbox" value="all" id="quizLesAll" onchange="window.toggleAllQuizLessons(this)" class="mr-2 accent-white w-4 h-4"> Tutte</label>`;
+  let qHtml = `<label class="inline-flex items-center bg-apple-blue text-white font-semibold px-3.5 py-2 rounded-xl cursor-pointer text-xs transition shadow-sm"><input type="checkbox" value="all" id="quizLesAll" onchange="window.toggleAllQuizLessons(this)" class="mr-2 accent-white w-4 h-4"> ${t('Tutte')}</label>`;
   numericLessons.forEach(l => { qHtml += cbLabel(l, 'L' + l); });
   if (hasCustom) qHtml += cbLabel('custom', 'Cloud');
   qCbContainer.innerHTML = qHtml;
@@ -2509,6 +2580,7 @@ window.refreshUI = function () {
 // Attributo lang per i testi cinesi: i lettori di schermo li pronunciano con la voce giusta
 const zhLang = s => /[㐀-鿿]/.test(String(s)) ? ' lang="zh-CN"' : '';
 const STATUS_LABEL = { known: 'imparata', learning: 'da ripassare', new: 'nuova' };
+const stLbl = st => t(STATUS_LABEL[st]);
 
 // ─── Vocab table ──────────────────────────────────────────────────────────────
 const TABLE_PAGE = 150;
@@ -2540,10 +2612,10 @@ window.renderTable = function (keep = false) {
 
   sorted.forEach(item => {
     if (sortMode === 'cat' && !searchTerm && item.cat !== currentCategory) {
-      html += `<tr class="bg-white/40"><td colspan="4" class="py-3 px-6 text-xs font-bold text-apple-textsec uppercase tracking-widest border-b border-white/40">${escHtml(item.cat)}</td></tr>`;
+      html += `<tr class="bg-white/40"><td colspan="4" class="py-3 px-6 text-xs font-bold text-apple-textsec uppercase tracking-widest border-b border-white/40">${escHtml(t(item.cat))}</td></tr>`;
       currentCategory = item.cat;
     } else if (sortMode === 'lesson' && !searchTerm && item.lesson !== currentLesson) {
-      const lName = item.lesson === 'custom' ? 'Cloud' : `Lezione ${item.lesson}`;
+      const lName = item.lesson === 'custom' ? 'Cloud' : t('Lezione {n}', { n: item.lesson });
       html += `<tr class="bg-white/40"><td colspan="4" class="py-3 px-6 text-xs font-bold text-apple-textsec uppercase tracking-widest border-b border-white/40">${lName}</td></tr>`;
       currentLesson = item.lesson;
     }
@@ -2552,10 +2624,10 @@ window.renderTable = function (keep = false) {
     const zh = escHtml(item.zh);
     const st = wordStatus(wkey(item));
     const statusClass = st === 'known' ? 'bg-[#34C759]' : st === 'learning' ? 'bg-[#FF3B30]' : 'bg-gray-300';
-    const statusDot = `<button onclick="window.toggleWordStatus('${escAttr(wkey(item))}')" aria-label="${zh}: ${STATUS_LABEL[st]}. Cambia stato" title="Stato: ${STATUS_LABEL[st]}" class="w-4 h-4 rounded-full ${statusClass} shadow-sm border border-white hover:scale-110 transition"></button>`;
-    const supBadge = item.sup ? ' <span class="text-[10px] font-bold text-apple-textsec bg-white/70 border border-gray-200 rounded-full px-1.5 py-0.5 align-middle" title="Parola supplementare" lang="zh-CN">补充</span>' : '';
+    const statusDot = `<button onclick="window.toggleWordStatus('${escAttr(wkey(item))}')" aria-label="${t('{zh}: {st}. Cambia stato', { zh, st: stLbl(st) })}" title="${t('Stato: {st}', { st: stLbl(st) })}" class="w-4 h-4 rounded-full ${statusClass} shadow-sm border border-white hover:scale-110 transition"></button>`;
+    const supBadge = item.sup ? ` <span class="text-[10px] font-bold text-apple-textsec bg-white/70 border border-gray-200 rounded-full px-1.5 py-0.5 align-middle" title="${t('Parola supplementare')}" lang="zh-CN">补充</span>` : '';
     const deletBtn = item.lesson === 'custom'
-      ? `<button onclick="window.promptDeleteCustomWord('${safeZh}')" class="text-sm border border-red-200 text-red-500 bg-red-50 hover:bg-red-100 rounded-full p-2.5 ml-1 transition shadow-sm" title="Elimina" aria-label="Elimina ${zh}">🗑️</button>`
+      ? `<button onclick="window.promptDeleteCustomWord('${safeZh}')" class="text-sm border border-red-200 text-red-500 bg-red-50 hover:bg-red-100 rounded-full p-2.5 ml-1 transition shadow-sm" title="${t('Elimina')}" aria-label="${t('Elimina {zh}', { zh })}">🗑️</button>`
       : '';
 
     html += `<tr class="hover:bg-white/60 transition duration-150 ${item.lesson === 'custom' ? 'bg-white/30' : ''}">
@@ -2563,15 +2635,15 @@ window.renderTable = function (keep = false) {
       <td class="py-4 px-6 text-sm font-semibold border-b border-white/20">${escHtml(getNativeString(item))}${supBadge}</td>
       <td class="py-4 px-6 text-2xl font-bold flex items-center gap-3 border-b border-white/20">
         <span lang="zh-CN">${zh}</span>
-        <button onclick="window.playAudio('${safeZh}')" class="text-sm bg-white border border-gray-200 text-apple-text hover:bg-gray-50 rounded-full p-2.5 transition ml-2 shadow-sm" title="Audio" aria-label="Ascolta ${zh}">🔊</button>
-        <button onclick="window.openWritingLab('${safeZh}')" class="text-sm bg-white border border-gray-200 text-apple-text hover:bg-gray-50 rounded-full p-2.5 transition ml-1 shadow-sm" title="Tratti" aria-label="Tratti di ${zh}">✍️</button>
+        <button onclick="window.playAudio('${safeZh}')" class="text-sm bg-white border border-gray-200 text-apple-text hover:bg-gray-50 rounded-full p-2.5 transition ml-2 shadow-sm" title="${t('Ascolta')}" aria-label="${t('Ascolta {zh}', { zh })}">🔊</button>
+        <button onclick="window.openWritingLab('${safeZh}')" class="text-sm bg-white border border-gray-200 text-apple-text hover:bg-gray-50 rounded-full p-2.5 transition ml-1 shadow-sm" title="${t('Tratti')}" aria-label="${t('Tratti di {zh}', { zh })}">✍️</button>
         ${deletBtn}
       </td>
       <td class="py-4 px-6 font-mono text-base font-medium text-apple-textsec border-b border-white/20">${escHtml(item.py)}</td>
     </tr>`;
   });
   if (total > sorted.length) {
-    html += `<tr><td colspan="4" class="py-5 text-center"><button onclick="window.showMoreTable()" class="bg-white/80 hover:bg-white text-apple-text border border-gray-200 font-semibold py-3 px-6 rounded-xl shadow-sm transition">Mostra altre ${Math.min(TABLE_PAGE, total - sorted.length)} (ne restano ${total - sorted.length})</button></td></tr>`;
+    html += `<tr><td colspan="4" class="py-5 text-center"><button onclick="window.showMoreTable()" class="bg-white/80 hover:bg-white text-apple-text border border-gray-200 font-semibold py-3 px-6 rounded-xl shadow-sm transition">${t('Mostra altre {a} (ne restano {b})', { a: Math.min(TABLE_PAGE, total - sorted.length), b: total - sorted.length })}</button></td></tr>`;
   }
   tbody.innerHTML = html;
 };
@@ -2622,8 +2694,9 @@ window.saveManualWord = function () {
   const zh = $id('manZh').value.trim();
   const py = $id('manPy').value.trim();
   const it = $id('manIt').value.trim();
-  if (!zh || !py || !it) { window.showToast('Compila Cinese, Pinyin e Italiano!', 'error'); return; }
-  window.customVocabData.push({ zh, py, it, en: it, cat: $id('manCat').value, lesson: 'custom', createdAt: Date.now() });
+  const en = $id('manEn').value.trim();
+  if (!zh || !py || (!it && !en)) { window.showToast('Compila Cinese, Pinyin e almeno un significato (italiano o inglese)!', 'error'); return; }
+  window.customVocabData.push({ zh, py, it: it || en, en: en || it, cat: $id('manCat').value, lesson: 'custom', createdAt: Date.now() });
   window.saveToLocal(); window.refreshUI();
   ['manZh', 'manPy', 'manIt', 'manEn'].forEach(id => { $id(id).value = ''; });
   window.showToast('Salvato nel dispositivo!', 'success');
@@ -2707,19 +2780,19 @@ window.renderFlashcards = function (forceData = null, keep = false) {
     const hintValue = escHtml((frontMode.includes('py') || frontMode === 'nat') ? item.zh : item.py);
 
     return `<div class="flashcard-container min-h-[16rem] h-auto aspect-square">
-      <div class="flashcard" onclick="window.flipStandardCard(this)" role="button" tabindex="0" aria-label="Flashcard ${index + 1}: premi Invio per girarla"
+      <div class="flashcard" onclick="window.flipStandardCard(this)" role="button" tabindex="0" aria-label="${t('Flashcard {n}: premi Invio per girarla', { n: index + 1 })}"
         onkeydown="if (event.target === this && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); window.flipStandardCard(this); }">
         <div class="flashcard-front">
           ${statusDot}${cloudBadge}
           ${getCardContentHTML(item, frontMode, true, false)}
-          <button onclick="event.stopPropagation(); document.getElementById('hint-${index}').classList.toggle('hidden')" class="mt-4 px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-[10px] font-bold text-apple-textsec uppercase tracking-widest transition">Aiuto</button>
+          <button onclick="event.stopPropagation(); document.getElementById('hint-${index}').classList.toggle('hidden')" class="mt-4 px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-[10px] font-bold text-apple-textsec uppercase tracking-widest transition">${t('Aiuto')}</button>
           <span id="hint-${index}" class="hidden text-sm mt-2 font-mono font-medium text-apple-textsec"${zhLang(hintValue)}>${hintValue}</span>
         </div>
         <div class="flashcard-back">
           ${getCardContentHTML(item, backMode, false, false)}
           <div class="flex gap-2 mt-5 flex-wrap justify-center w-full px-2">
-            <button onclick="event.stopPropagation(); window.playAudio('${safeZh}')" class="p-2.5 bg-white/20 border border-white/30 rounded-full hover:bg-white/30 text-white transition shadow-sm text-xl" aria-label="Ascolta ${zhTxt}">🔊</button>
-            <button onclick="event.stopPropagation(); window.openWritingLab('${safeZh}')" class="p-2.5 bg-white/20 border border-white/30 rounded-full hover:bg-white/30 text-white transition shadow-sm text-xl" aria-label="Tratti di ${zhTxt}">✍️</button>
+            <button onclick="event.stopPropagation(); window.playAudio('${safeZh}')" class="p-2.5 bg-white/20 border border-white/30 rounded-full hover:bg-white/30 text-white transition shadow-sm text-xl" aria-label="${t('Ascolta {zh}', { zh: zhTxt })}">🔊</button>
+            <button onclick="event.stopPropagation(); window.openWritingLab('${safeZh}')" class="p-2.5 bg-white/20 border border-white/30 rounded-full hover:bg-white/30 text-white transition shadow-sm text-xl" aria-label="${t('Tratti di {zh}', { zh: zhTxt })}">✍️</button>
           </div>
         </div>
       </div>
@@ -2727,7 +2800,7 @@ window.renderFlashcards = function (forceData = null, keep = false) {
   });
   grid.innerHTML = parts.join('');
   const rest = window.currentFlashcardsView.length - parts.length, more = $id('fcMoreBtn');
-  if (more) { more.classList.toggle('hidden', rest <= 0); more.innerText = `Mostra altre ${Math.min(FC_PAGE, rest)} carte (ne restano ${rest})`; }
+  if (more) { more.classList.toggle('hidden', rest <= 0); more.innerText = t('Mostra altre {a} carte (ne restano {b})', { a: Math.min(FC_PAGE, rest), b: rest }); }
 };
 
 window.shuffleFlashcards = function () {
@@ -2796,9 +2869,9 @@ window.renderFlashcardQuizCard = function () {
   $id('fcQuizBackContent').innerHTML  = getCardContentHTML(card, backMode, false, true);
   $id('fcQuizBackExtraButtons').innerHTML =
     `<div class="flex items-center gap-2 bg-white/20 border border-white/30 rounded-2xl px-3 py-2">
-      <button onclick="event.stopPropagation(); window.playAudio('${escAttr(card.zh)}')" class="text-2xl" title="Ascolta" aria-label="Ascolta">🔊</button>
+      <button onclick="event.stopPropagation(); window.playAudio('${escAttr(card.zh)}')" class="text-2xl" title="${t('Ascolta')}" aria-label="${t('Ascolta')}">🔊</button>
       <span class="text-[10px] text-white/70 font-semibold">🐢</span>
-      <input type="range" id="fcSpeedSlider" aria-label="Velocità audio" min="0.3" max="1.5" step="0.05" value="${(window.audioRate||0.85)}"
+      <input type="range" id="fcSpeedSlider" aria-label="${t('Velocità audio')}" min="0.3" max="1.5" step="0.05" value="${(window.audioRate||0.85)}"
         oninput="event.stopPropagation(); window.setAudioRate(parseFloat(this.value))"
         onclick="event.stopPropagation()" class="w-20 accent-white cursor-pointer">
       <span id="fcSpeedLabel" class="text-[10px] font-semibold text-white/70 w-8">${(window.audioRate||0.85).toFixed(2)}x</span>
@@ -2843,7 +2916,7 @@ window.endFlashcardQuiz = function (finished) {
       quizzedWords: window.fcQuizState.quizzedWords,
       label: window.fcQuizState.label || undefined
     });
-    window.showToast(`Punteggio: ${window.fcQuizState.correct}/${window.fcQuizState.cards.length}`, 'success');
+    window.showToast(t('Punteggio: {a}/{b}', { a: window.fcQuizState.correct, b: window.fcQuizState.cards.length }), 'success');
   }
   window.saveToLocal(); window.refreshUI(); // anche un quiz interrotto aggiorna il ripasso intelligente
 };
@@ -2859,7 +2932,7 @@ window.startMegaQuiz = function () {
   if (cat !== 'all') pool = pool.filter(q => q.c === cat || q.c.includes(cat));
   if (pool.length === 0) { window.showToast('Nessuna domanda trovata.', 'error'); return; }
   pool = (range && cat === 'all') ? interleaveByCategory(pool) : shuffle(pool);
-  const catLabel = ($id('mqCategory').selectedOptions[0] || {}).text || cat;
+  const catLabel = (course().mqCategories.find(c => c[0] === cat) || [cat, cat])[1]; // in italiano: lo storico si traduce quando viene mostrato
   startMegaQuizWith(pool.slice(0, amount), range ? `${catLabel} · L${range[0]}${range[1] !== range[0] ? '–' + range[1] : ''}` : cat);
 };
 
@@ -2887,7 +2960,7 @@ window.renderMegaQuizQuestion = function () {
   window.megaQuizState.answered = false;
 
   $id('mqProgress').innerText        = `${window.megaQuizState.currentIndex + 1} / ${window.megaQuizState.questions.length}`;
-  $id('mqCategoryDisplay').innerText = (q.c || 'Generale') + (q.les ? ` · L${q.les}` : '');
+  $id('mqCategoryDisplay').innerText = t(q.c || 'Generale') + (q.les ? ` · L${q.les}` : '');
   $id('mqQuestionText').innerText    = q.q.it || q.q;
   window.megaQuizState.currentExplanation = q.e.it || q.e;
   window.megaQuizState.currentAudioText   = q.audioText || '';
@@ -2922,7 +2995,7 @@ window.renderMegaQuizQuestion = function () {
     // Selected area
     let html = `<div class="w-full bg-white/40 border border-white/60 rounded-3xl p-5 min-h-[6rem] flex ${layoutClass} gap-3 items-center shadow-sm" id="mqReorderSelectedArea">`;
     if (window.megaQuizState.reorderSelected.length === 0) {
-      html += `<span class="text-apple-textsec italic font-medium mx-auto text-sm">Componi qui...</span>`;
+      html += `<span class="text-apple-textsec italic font-medium mx-auto text-sm">${t('Componi qui...')}</span>`;
     } else {
       window.megaQuizState.reorderSelected.forEach((w, idx) => {
         html += `<button onclick="window.deselectReorderWord(${idx})" class="px-5 py-3 bg-apple-blue text-white rounded-2xl shadow-sm ${btnClass}"${zhLang(w)}>${escHtml(w)}</button>`;
@@ -2938,7 +3011,7 @@ window.renderMegaQuizQuestion = function () {
     html += `</div>`;
 
     if (window.megaQuizState.reorderPool.length === 0) {
-      html += `<button onclick="window.checkReorderAnswer()" class="w-full mt-8 bg-[#34C759] hover:bg-[#2EAF4E] text-white font-bold py-4 rounded-2xl shadow-md transition text-lg tracking-wide">Conferma Risposta</button>`;
+      html += `<button onclick="window.checkReorderAnswer()" class="w-full mt-8 bg-[#34C759] hover:bg-[#2EAF4E] text-white font-bold py-4 rounded-2xl shadow-md transition text-lg tracking-wide">${t('Conferma Risposta')}</button>`;
     }
     optsContainer.innerHTML = html;
   } else {
@@ -2983,7 +3056,7 @@ window.checkReorderAnswer = function () {
 
   if (!isCorrect) {
     const correctText = q.isDialogue ? q.words.map(escHtml).join('<br/>') : escHtml(q.correctOrder);
-    html += `<div class="mt-6 p-4 bg-[#FF3B30]/10 border border-[#FF3B30]/20 rounded-2xl text-[#FF3B30] font-semibold text-base text-center">Corretta: <br/><span class="text-xl text-black mt-2 inline-block" lang="zh-CN">${correctText}</span></div>`;
+    html += `<div class="mt-6 p-4 bg-[#FF3B30]/10 border border-[#FF3B30]/20 rounded-2xl text-[#FF3B30] font-semibold text-base text-center">${t('Corretta:')} <br/><span class="text-xl text-black mt-2 inline-block" lang="zh-CN">${correctText}</span></div>`;
   }
   $id('mqOptionsContainer').innerHTML = html;
   window.showMegaQuizFeedback(isCorrect);
@@ -3000,7 +3073,7 @@ window.showMegaQuizFeedback = function (isCorrect) {
   title.className  = isCorrect
     ? 'font-bold text-xl mb-2 tracking-tight text-[#34C759]'
     : 'font-bold text-xl mb-2 tracking-tight text-[#FF3B30]';
-  title.innerText  = isCorrect ? 'Esatto' : 'Sbagliato';
+  title.innerText  = t(isCorrect ? 'Esatto' : 'Sbagliato');
 
   const exp = $id('mqFeedbackExp');
   exp.innerText  = window.megaQuizState.currentExplanation;
@@ -3046,7 +3119,7 @@ window.endMegaQuiz = function (finished) {
       correct: window.megaQuizState.correct,
       category: window.megaQuizState.label
     });
-    window.showToast(`Punteggio: ${window.megaQuizState.correct}/${window.megaQuizState.questions.length}`, 'success');
+    window.showToast(t('Punteggio: {a}/{b}', { a: window.megaQuizState.correct, b: window.megaQuizState.questions.length }), 'success');
   }
   window.saveToLocal(); window.refreshUI(); // anche un quiz interrotto salva risposte, errori e ripasso
 };
@@ -3100,12 +3173,12 @@ window.refreshGroqKeyStatus = function () {
   if (!input || !status) return;
   input.value = '';
   if (window.getGroqKey()) {
-    input.placeholder = '•••• chiave salvata (lascia vuoto per non cambiarla)';
-    status.innerHTML = '✅ Chiave configurata su questo dispositivo. <button onclick="window.clearGroqKey()" class="underline hover:text-apple-text">Rimuovi</button>';
+    input.placeholder = t('•••• chiave salvata (lascia vuoto per non cambiarla)');
+    status.innerHTML = `✅ ${t('Chiave configurata su questo dispositivo.')} <button onclick="window.clearGroqKey()" class="underline hover:text-apple-text">${t('Rimuovi')}</button>`;
   } else {
     input.placeholder = 'gsk_...';
-    status.innerHTML = 'Nessuna chiave configurata: le funzioni AI non funzioneranno finché non ne inserisci una. ' +
-      '<a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer" class="underline hover:text-apple-text">Ottienine una gratuita →</a>';
+    status.innerHTML = `${t('Nessuna chiave configurata: le funzioni AI non funzioneranno finché non ne inserisci una.')} ` +
+      `<a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer" class="underline hover:text-apple-text">${t('Ottienine una gratuita →')}</a>`;
   }
 };
 
@@ -3133,9 +3206,9 @@ window.fetchAIPost = async function (promptText) {
 
 // Messaggio d'errore condiviso dalle funzioni AI: distingue "chiave non configurata" dal resto
 function aiErrorMessage(e) {
-  return (e && e.message === 'MISSING_GROQ_KEY')
+  return t((e && e.message === 'MISSING_GROQ_KEY')
     ? 'Configura la tua Groq API Key nella sezione ✨ AI Tutor Interattivo.'
-    : 'Errore AI: riprova.';
+    : 'Errore AI: riprova.');
 }
 
 // ─── AI collegata al corso: solo il vocabolario già studiato ─────────────────
@@ -3149,8 +3222,8 @@ const AI_BASIC = '的了吗呢吧啊是不没很也都和在有我你他她它�
 function updateAiVocabLabel() {
   const el = $id('aiVocabLabel'); if (!el) return;
   el.innerText = course().hasLessons
-    ? `Usa solo il vocabolario che ho studiato (lezioni 1–${curLesson()})`
-    : 'Usa solo il vocabolario del corso Politecnico';
+    ? t('Usa solo il vocabolario che ho studiato (lezioni 1–{n})', { n: curLesson() })
+    : t('Usa solo il vocabolario del corso Politecnico');
 }
 
 // Sottolinea in rosso i caratteri che non compaiono nel vocabolario studiato
@@ -3178,7 +3251,7 @@ window.generateSentences = async function () {
   const allowed = new Set([...words.join(''), ...input, ...AI_BASIC]);
   const prompt = `Generate 3 short HSK1/HSK2 level Chinese sentences using the word "${input}".`
     + (restrict ? ` The learner only knows these words: ${words.join('、')}. Besides "${input}", use ONLY words from that list (basic particles like 的 了 吗 呢 吧 and numbers are fine).` : '')
-    + ` Output a JSON object with a single array called "sentences". Each object in the array must have "chinese", "pinyin", and "translation" (in Italian). ONLY OUTPUT JSON.`;
+    + ` Output a JSON object with a single array called "sentences". Each object in the array must have "chinese", "pinyin", and "translation" (in ${isEn() ? 'English' : 'Italian'}). ONLY OUTPUT JSON.`;
   try {
     const result = await window.fetchAIPost(prompt);
     if (!result?.sentences?.length) throw new Error('Formato non valido.');
@@ -3193,10 +3266,10 @@ window.generateSentences = async function () {
           <p class="font-mono font-semibold text-sm text-apple-blue mb-1">${escHtml(s.pinyin)}</p>
           <p class="text-sm text-apple-textsec font-medium">${escHtml(s.translation)}</p>
         </div>
-        <button onclick="window.playAudio('${escAttr(zh)}')" class="shrink-0 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition" aria-label="Ascolta la frase">🔊</button>
+        <button onclick="window.playAudio('${escAttr(zh)}')" class="shrink-0 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition" aria-label="${t('Ascolta la frase')}">🔊</button>
       </div>`;
     }).join('');
-    const note = unknownTotal ? `<p class="text-xs text-apple-textsec mt-4">I caratteri sottolineati in rosso non sono ancora nel vocabolario che hai studiato.</p>` : '';
+    const note = unknownTotal ? `<p class="text-xs text-apple-textsec mt-4">${t('I caratteri sottolineati in rosso non sono ancora nel vocabolario che hai studiato.')}</p>` : '';
     output.innerHTML = `<div class="bg-white/80 backdrop-blur-md p-6 rounded-2xl border border-gray-200/50 shadow-sm">${inner}${note}</div>`;
     output.style.display = 'flex';
   } catch (e) {
@@ -3215,12 +3288,12 @@ window.generateAIExercises = async function () {
   const words = aiWordList();
   const grammar = course().hasLessons
     ? window.TONGJI_DATA.lessons.filter(l => l.n >= 4 && l.n <= curLesson()).flatMap(l => l.grammar.map(g => g.t)).slice(-30) : [];
-  const prompt = `Create 5 fill-in-the-blank multiple-choice exercises for an Italian beginner learner of Mandarin Chinese.
+  const prompt = `Create 5 fill-in-the-blank multiple-choice exercises for a beginner learner of Mandarin Chinese whose language is ${isEn() ? 'English' : 'Italian'}.
 Use ONLY these Chinese words: ${words.join('、')}.
 ${grammar.length ? `Practise especially these grammar points: ${grammar.join('; ')}.` : ''}
 Each exercise is one short, natural Chinese sentence in which exactly one word is replaced by "___".
-Return ONLY a JSON object like {"exercises":[{"zh":"我 ___ 学生。","pinyin":"Wǒ ___ xuésheng.","it":"Sono uno studente.","options":["是","在","有","叫"],"answer":0,"explanation":"Spiegazione breve in italiano."}]}.
-"options" must be 4 different Chinese words with exactly one correct answer; "answer" is the index of the correct option; "it" and "explanation" must be in Italian.`;
+Return ONLY a JSON object like {"exercises":[{"zh":"我 ___ 学生。","pinyin":"Wǒ ___ xuésheng.","it":"${isEn() ? 'I am a student.' : 'Sono uno studente.'}","options":["是","在","有","叫"],"answer":0,"explanation":"${isEn() ? 'Short explanation.' : 'Spiegazione breve.'}"}]}.
+"options" must be 4 different Chinese words with exactly one correct answer; "answer" is the index of the correct option; "it" and "explanation" must be in ${isEn() ? 'English' : 'Italian'}.`;
   try {
     const res = await window.fetchAIPost(prompt);
     const valid = (res && Array.isArray(res.exercises) ? res.exercises : []).filter(x =>
@@ -3229,9 +3302,9 @@ Return ONLY a JSON object like {"exercises":[{"zh":"我 ___ 学生。","pinyin":
       Number.isInteger(x.answer) && x.answer >= 0 && x.answer < 4).slice(0, 5);
     if (!valid.length) throw new Error('Formato non valido.');
     const qs = valid.map(x => ({
-      c: 'Esercizi AI', q: { it: `Completamento: ${x.zh}${x.it ? `\n(${x.it})` : ''}` },
+      c: 'Esercizi AI', q: { it: `${t('Completamento')}: ${x.zh}${x.it ? `\n(${x.it})` : ''}` },
       ...mcOptions([x.options[x.answer], ...x.options.filter((_, i) => i !== x.answer)]),
-      e: { it: x.explanation || `Risposta giusta: ${x.options[x.answer]}` }, pyHint: x.pinyin || null,
+      e: { it: x.explanation || t('Risposta giusta: {a}', { a: x.options[x.answer] }) }, pyHint: x.pinyin || null,
       audioText: x.zh.replace(/\s*___\s*/g, '…')
     }));
     openSection('sec-mega-quiz', 'icon-mega-quiz');
@@ -3254,7 +3327,7 @@ window.importVocabularyWithAI = async function () {
   btn.innerHTML = '<span class="loader loader-light"></span>'; btn.disabled = true;
   hide(status);
 
-  const prompt = `Extract the main Chinese vocabulary words from this text: "${text}". Return ONLY a JSON array of objects. Each object must have: "zh" (Chinese characters), "py" (pinyin), "it" (Italian translation), and "cat" (a semantic category in Italian like "Verbi", "Sostantivi", etc). ONLY OUTPUT JSON.`;
+  const prompt = `Extract the main Chinese vocabulary words from this text: "${text}". Return ONLY a JSON array of objects. Each object must have: "zh" (Chinese characters), "py" (pinyin), "it" (Italian translation), "en" (English translation) and "cat" (a semantic category in Italian like "Verbi", "Sostantivi", etc). ONLY OUTPUT JSON.`;
   try {
     const newVocabs = await window.fetchAIPost(prompt);
     if (!Array.isArray(newVocabs) || !newVocabs.length) throw new Error('Nessun vocabolo valido.');
@@ -3262,17 +3335,17 @@ window.importVocabularyWithAI = async function () {
     let added = 0;
     newVocabs.forEach(nv => {
       if (!existing.some(ev => ev.zh === nv.zh)) {
-        window.customVocabData.push({ cat: nv.cat || 'Nuovi Vocaboli', it: nv.it, en: nv.it, zh: nv.zh, py: nv.py, lesson: 'custom', createdAt: Date.now() });
+        window.customVocabData.push({ cat: nv.cat || 'Nuovi Vocaboli', it: nv.it || nv.en, en: nv.en || nv.it, zh: nv.zh, py: nv.py, lesson: 'custom', createdAt: Date.now() });
         added++;
       }
     });
     if (added > 0) {
       window.saveToLocal(); window.refreshUI();
       $id('newLessonText').value = '';
-      status.innerHTML   = `<strong>✅ Salvato!</strong> ${added} nuovi vocaboli.`;
+      status.innerHTML   = `<strong>✅ ${t('Salvato!')}</strong> ${t('{n} nuovi vocaboli.', { n: added })}`;
       status.className   = 'p-4 mt-4 rounded-xl text-sm font-medium bg-[#34C759]/10 text-[#34C759] border border-[#34C759]/20';
     } else {
-      status.innerHTML   = 'Vocaboli già presenti.';
+      status.innerHTML   = t('Vocaboli già presenti.');
       status.className   = 'p-4 mt-4 rounded-xl text-sm font-medium bg-gray-100 text-apple-textsec border border-gray-200';
     }
     show(status);
@@ -3311,6 +3384,7 @@ window.handleWriterSearch = function () {
       $id('writerInput').value = found.zh;
       window.renderCharacters(found.zh);
     } else {
+      $id('writer-error').innerText = t('Parola non trovata nel vocabolario.');
       show($id('writer-error'));
       $id('writer-container').innerHTML = '';
       $id('writer-info').innerHTML = '';
@@ -3340,7 +3414,7 @@ window.renderCharacters = function (inputWord) {
     const div = document.createElement('div');
     div.id = 'hanzi-char-' + idx;
     div.className = 'keep-light w-32 h-32 md:w-40 md:h-40 border border-gray-300 rounded-2xl relative bg-white/80 shadow-sm flex items-center justify-center';
-    div.setAttribute('role', 'img'); div.setAttribute('aria-label', `Tratti del carattere ${char}`);
+    div.setAttribute('role', 'img'); div.setAttribute('aria-label', t('Tratti del carattere {c}', { c: char }));
     container.appendChild(div);
     window.activeWriters.push(HanziWriter.create(div.id, char, {
       width: 140, height: 140, padding: 10, showOutline: true,
@@ -3357,7 +3431,7 @@ window.quizWriters    = function () { window.activeWriters.forEach(w => w.quiz()
 window.showWordList = function (type) {
   const container = $id('wordListsContainer'); if (!container) return;
   const list = window.getCombinedVocab().filter(v => wordStatus(wkey(v)) === type);
-  if (!list.length) { container.innerHTML = '<span class="italic text-apple-textsec text-center block w-full py-4">Nessuna parola.</span>'; return; }
+  if (!list.length) { container.innerHTML = '<span class="italic text-apple-textsec text-center block w-full py-4">' + t('Nessuna parola.') + '</span>'; return; }
   container.innerHTML = '<ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">'
     + list.map(v =>
         `<li class="flex items-center gap-3 bg-white/50 p-2 rounded-xl border border-white/60">
@@ -3385,7 +3459,7 @@ window.renderStats = function () {
       { label: 'Successo MegaQuiz', value: successRate + '%', color: 'text-[#34C759]' }
     ].map(({ label, value, color }) =>
       `<div class="bg-white/40 p-6 rounded-3xl border border-white/60 text-center">
-        <p class="text-apple-textsec text-xs font-semibold uppercase tracking-wider mb-2">${label}</p>
+        <p class="text-apple-textsec text-xs font-semibold uppercase tracking-wider mb-2">${t(label)}</p>
         <p class="text-5xl font-extrabold ${color} tracking-tight">${value}</p>
       </div>`
     ).join('');
@@ -3413,8 +3487,8 @@ window.renderStats = function () {
     progressContainer.innerHTML = sortedKeys.map(key => {
       const ls  = lessonStats[key];
       const pct = Math.round((ls.known / ls.total) * 100);
-      const lbl = key === 'custom' ? 'Cloud Personale'
-        : course().hasLessons ? `Lezione ${key} · ${(tongjiLesson(parseInt(key)) || {}).zh || ''}` : `Lezione ${key}`;
+      const lbl = key === 'custom' ? t('Cloud Personale')
+        : course().hasLessons ? `${t('Lezione {n}', { n: key })} · ${(tongjiLesson(parseInt(key)) || {}).zh || ''}` : t('Lezione {n}', { n: key });
       return `<div class="mb-4 border border-white/60 rounded-2xl overflow-hidden bg-white/40">
         <div class="p-4 cursor-pointer flex justify-between items-center hover:bg-white/60 transition" role="button" tabindex="0" onclick="document.getElementById('les-det-${key}').classList.toggle('hidden')" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }">
           <span class="font-bold text-apple-text text-base">${lbl}</span>
@@ -3431,16 +3505,22 @@ window.renderStats = function () {
   }
 
   // History panels
+  // Etichetta del Mega-Quiz salvata in italiano (es. "Completamento (Buchi) · L1–4"): si traduce la parte prima di " · "
+  const mqHistoryLabel = c => {
+    if (!c || c === 'all') return t('Tutti (Mix)');
+    const [head, ...rest] = c.split(' · ');
+    return [head === 'all' ? t('Tutti (Mix)') : t(head), ...rest].join(' · ');
+  };
   const renderHist = (data, elId, isMega) => {
     const el = $id(elId); if (!el) return;
-    if (!data.length) { el.innerHTML = '<p class="text-apple-textsec italic text-sm text-center py-4">Nessun quiz.</p>'; return; }
+    if (!data.length) { el.innerHTML = '<p class="text-apple-textsec italic text-sm text-center py-4">' + t('Nessun quiz.') + '</p>'; return; }
     el.innerHTML = data.map(q => {
       const dateStr = new Date(q.timestamp).toLocaleString();
       if (isMega) {
         return `<div class="bg-white/50 p-4 rounded-2xl shadow-sm border border-white/60 flex justify-between items-center mb-3">
           <div>
             <p class="font-bold text-apple-text text-base">${dateStr}</p>
-            <p class="text-xs text-apple-textsec mt-1 font-medium uppercase tracking-wide">${q.category || 'Mix'}</p>
+            <p class="text-xs text-apple-textsec mt-1 font-medium uppercase tracking-wide">${escHtml(mqHistoryLabel(q.category))}</p>
           </div>
           <span class="bg-apple-blue text-white font-bold text-sm px-4 py-2 rounded-xl shadow-sm">${q.correct}/${q.total}</span>
         </div>`;
@@ -3466,7 +3546,7 @@ window.renderStats = function () {
 // ─── Lezioni del corso Tongji ─────────────────────────────────────────────────
 window.lessonViewState = { n: null, tab: 'vocab', showPy: true, showIt: false };
 
-const sayBtn = text => `<button data-say="${escHtml(sayText(text))}" onclick="event.stopPropagation(); window.playAudio(this.dataset.say)" class="shrink-0 w-9 h-9 inline-flex items-center justify-center bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition shadow-sm text-base" title="Ascolta" aria-label="Ascolta">🔊</button>`;
+const sayBtn = text => `<button data-say="${escHtml(sayText(text))}" onclick="event.stopPropagation(); window.playAudio(this.dataset.say)" class="shrink-0 w-9 h-9 inline-flex items-center justify-center bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition shadow-sm text-base" title="${t('Ascolta')}" aria-label="${t('Ascolta')}">🔊</button>`;
 const pillBtn = (onclick, label, primary = false) => `<button onclick="${onclick}" class="${primary ? 'bg-apple-blue hover:bg-apple-bluedark text-white' : 'bg-white/80 hover:bg-white text-apple-text border border-gray-200'} font-semibold py-2.5 px-4 rounded-xl shadow-sm transition text-sm">${label}</button>`;
 const openSection = (secId, iconId) => { if ($id(secId).classList.contains('hidden')) window.toggleSection(secId, iconId); };
 const pctOf = (a, b) => b ? Math.round(a / b * 100) : 0;
@@ -3528,7 +3608,7 @@ window.renderLessonsSection = function () {
     const ls = lessonStats(l.n, totals), pct = pctOf(ls.known, ls.words);
     const cls = l.n === st.n ? 'bg-apple-blue text-white border-apple-blue shadow-md'
       : l.n <= cur ? 'bg-white/80 text-apple-text border-white hover:bg-white' : 'bg-white/30 text-apple-textsec border-white/50 hover:bg-white/60';
-    return `<button onclick="window.openLesson(${l.n})" title="${escHtml(l.it)} — vocaboli imparati ${pct}%" aria-label="Lezione ${l.n}: ${escHtml(l.it)}, vocaboli imparati ${pct}%"${l.n === st.n ? ' aria-current="true"' : ''}
+    return `<button onclick="window.openLesson(${l.n})" title="${escHtml(tr(l.it))} — ${t('vocaboli imparati {p}%', { p: pct })}" aria-label="${escHtml(t('Lezione {n}: {it}, vocaboli imparati {p}%', { n: l.n, it: tr(l.it), p: pct }))}"${l.n === st.n ? ' aria-current="true"' : ''}
       class="min-w-[3.25rem] px-3 pt-2 pb-1.5 rounded-xl border text-sm font-bold transition ${cls}">${l.n === cur ? '📍' : ''}L${l.n}
       <span class="block h-1 mt-1 rounded-full bg-gray-200/50 overflow-hidden" aria-hidden="true"><span class="block h-1 bg-[#34C759]" style="width:${pct}%"></span></span></button>`;
   }).join('');
@@ -3540,19 +3620,19 @@ function lessonVocabHTML(words) {
     const st = wordStatus(wkey(v)), zh = escHtml(v.zh);
     const dot = st === 'known' ? 'bg-[#34C759]' : st === 'learning' ? 'bg-[#FF3B30]' : 'bg-gray-300';
     return `<div class="flex items-center gap-3 bg-white/60 border border-white/70 rounded-2xl p-3">
-      <button onclick="window.toggleWordStatus('${escAttr(wkey(v))}')" class="shrink-0 w-4 h-4 rounded-full ${dot} shadow-sm border border-white hover:scale-110 transition" title="Stato: ${STATUS_LABEL[st]} (tocca per cambiarlo)" aria-label="${zh}: ${STATUS_LABEL[st]}. Cambia stato"></button>
+      <button onclick="window.toggleWordStatus('${escAttr(wkey(v))}')" class="shrink-0 w-4 h-4 rounded-full ${dot} shadow-sm border border-white hover:scale-110 transition" title="${t('Stato: {st} (tocca per cambiarlo)', { st: stLbl(st) })}" aria-label="${t('{zh}: {st}. Cambia stato', { zh, st: stLbl(st) })}"></button>
       <div class="min-w-0 flex-1">
         <div class="flex items-baseline gap-2 flex-wrap"><span class="text-2xl font-bold text-apple-text" lang="zh-CN">${zh}</span><span class="font-mono text-sm text-apple-blue">${escHtml(v.py)}</span></div>
         <div class="text-sm text-apple-textsec leading-snug">${escHtml(getNativeString(v))}</div>
       </div>
       ${sayBtn(v.zh)}
-      <button onclick="window.openWritingLab('${escAttr(v.zh)}')" class="shrink-0 w-9 h-9 inline-flex items-center justify-center bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition shadow-sm text-base" title="Tratti" aria-label="Tratti di ${zh}">✍️</button>
+      <button onclick="window.openWritingLab('${escAttr(v.zh)}')" class="shrink-0 w-9 h-9 inline-flex items-center justify-center bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition shadow-sm text-base" title="${t('Tratti')}" aria-label="${t('Tratti di {zh}', { zh })}">✍️</button>
     </div>`;
   };
   const groups = [
-    ['Parole nuove · 生词', words.filter(v => !v.sup && !v.proper)],
-    ['Nomi propri · 专名', words.filter(v => v.proper)],
-    ['Parole supplementari · 补充词语' + (window.courseSettings.includeSupp === false ? ' (escluse da flashcard e quiz)' : ''), words.filter(v => v.sup)]
+    [t('Parole nuove · 生词'), words.filter(v => !v.sup && !v.proper)],
+    [t('Nomi propri · 专名'), words.filter(v => v.proper)],
+    [t('Parole supplementari · 补充词语') + (window.courseSettings.includeSupp === false ? t(' (escluse da flashcard e quiz)') : ''), words.filter(v => v.sup)]
   ].filter(g => g[1].length);
   return groups.map(([title, list]) => `<h4 class="text-xs font-bold uppercase tracking-widest text-apple-textsec mt-5 mb-3 first:mt-0">${title} · ${list.length}</h4>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-2">${list.map(row).join('')}</div>`).join('');
@@ -3560,11 +3640,11 @@ function lessonVocabHTML(words) {
 
 function lessonGrammarHTML(L) {
   return L.grammar.map((g, i) => `<div id="gram-${L.n}-${i}" class="bg-white/60 border border-white/70 rounded-2xl p-4 sm:p-5 mb-3 transition">
-    <h4 class="font-bold text-apple-text text-lg tracking-tight"${zhLang(g.t)}>${i + 1}. ${escHtml(g.t)}</h4>
-    <p class="text-sm text-apple-text leading-relaxed mt-1">${escHtml(g.x)}</p>
+    <h4 class="font-bold text-apple-text text-lg tracking-tight"${zhLang(g.t)}>${i + 1}. ${escHtml(tr(g.t))}</h4>
+    <p class="text-sm text-apple-text leading-relaxed mt-1">${escHtml(tr(g.x))}</p>
     <div class="mt-3 space-y-2">${g.ex.map(([zh, py, it]) => `<div class="flex items-start gap-3 bg-white/70 rounded-xl p-3">
       ${sayBtn(zh)}
-      <div class="min-w-0"><p class="text-lg font-semibold text-apple-text leading-snug" lang="zh-CN">${escHtml(zh)}</p><p class="font-mono text-xs text-apple-blue mt-0.5">${escHtml(py)}</p><p class="text-sm text-apple-textsec mt-0.5">${escHtml(it)}</p></div>
+      <div class="min-w-0"><p class="text-lg font-semibold text-apple-text leading-snug" lang="zh-CN">${escHtml(zh)}</p><p class="font-mono text-xs text-apple-blue mt-0.5">${escHtml(py)}</p><p class="text-sm text-apple-textsec mt-0.5">${escHtml(tr(it))}</p></div>
     </div>`).join('')}</div>
   </div>`).join('');
 }
@@ -3572,7 +3652,7 @@ function lessonGrammarHTML(L) {
 function lessonToggles() {
   const st = window.lessonViewState;
   const chip = (opt, label) => `<button onclick="window.toggleLessonOpt('${opt}')" aria-pressed="${!!st[opt]}" class="text-xs font-semibold px-3 py-1.5 rounded-full border transition ${st[opt] ? 'bg-apple-blue text-white border-apple-blue' : 'bg-white/80 text-apple-text border-gray-200'}">${st[opt] ? '✓ ' : ''}${label}</button>`;
-  return chip('showPy', 'Pinyin') + chip('showIt', 'Traduzione');
+  return chip('showPy', 'Pinyin') + chip('showIt', t('Traduzione'));
 }
 
 function lessonDialogueHTML(L) {
@@ -3580,28 +3660,28 @@ function lessonDialogueHTML(L) {
   const speakers = [...new Set(d.lines.map(l => l[0]))];
   const tint = ['bg-white/80', 'bg-blue-50/80', 'bg-amber-50/80', 'bg-green-50/80'];
   const lines = d.lines.map(([spk, spkIt, zh, py, it]) => `<div class="flex gap-3 items-start">
-    <div class="w-14 sm:w-20 shrink-0 pt-2 text-right"><p class="text-xs font-bold text-apple-text leading-tight">${escHtml(spkIt)}</p><p class="text-[11px] text-apple-textsec" lang="zh-CN">${escHtml(spk)}</p></div>
+    <div class="w-14 sm:w-20 shrink-0 pt-2 text-right"><p class="text-xs font-bold text-apple-text leading-tight">${escHtml(tr(spkIt))}</p><p class="text-[11px] text-apple-textsec" lang="zh-CN">${escHtml(spk)}</p></div>
     <div class="flex-1 min-w-0 ${tint[speakers.indexOf(spk) % tint.length]} border border-white rounded-2xl p-3 shadow-sm">
       <p class="text-lg font-semibold text-apple-text leading-relaxed" lang="zh-CN">${escHtml(zh)}</p>
       ${st.showPy ? `<p class="font-mono text-xs text-apple-blue mt-1">${escHtml(py)}</p>` : ''}
-      ${st.showIt ? `<p class="text-sm text-apple-textsec mt-1">${escHtml(it)}</p>` : ''}
+      ${st.showIt ? `<p class="text-sm text-apple-textsec mt-1">${escHtml(tr(it))}</p>` : ''}
     </div>
     ${sayBtn(zh)}
   </div>`).join('');
   return `<div class="flex flex-wrap items-center gap-2 mb-4">
-      <p class="text-sm font-semibold text-apple-textsec w-full sm:w-auto sm:flex-1">🎬 ${escHtml(d.scene)}</p>
-      <button data-say="${escHtml(d.lines.map(l => l[2]).join(''))}" onclick="window.playAudio(this.dataset.say)" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/80 border border-gray-200 text-apple-text">▶ Ascolta tutto</button>
+      <p class="text-sm font-semibold text-apple-textsec w-full sm:w-auto sm:flex-1">🎬 ${escHtml(tr(d.scene))}</p>
+      <button data-say="${escHtml(d.lines.map(l => l[2]).join(''))}" onclick="window.playAudio(this.dataset.say)" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/80 border border-gray-200 text-apple-text">${t('▶ Ascolta tutto')}</button>
       ${lessonToggles()}
     </div>
     <div class="space-y-3">${lines}</div>
-    ${d.reorder ? `<div class="mt-5">${pillBtn(`window.lessonQuiz(${L.n}, ${L.n}, 'Riordina Dialogo')`, '🔀 Esercizio: riordina il dialogo')}</div>` : ''}`;
+    ${d.reorder ? `<div class="mt-5">${pillBtn(`window.lessonQuiz(${L.n}, ${L.n}, 'Riordina Dialogo')`, t('🔀 Esercizio: riordina il dialogo'))}</div>` : ''}`;
 }
 
 function lessonReadingHTML(L) {
   const st = window.lessonViewState, r = L.reading;
   const qs = r.q.map(([qzh, qpy, opts], qi) => {
     const btns = shuffle(opts.map((o, i) => ({ o, ok: i === 0 })))
-      .map(x => `<button data-ok="${x.ok ? 1 : 0}" onclick="window.answerLessonQ(this)" class="mq-option px-4 py-2 rounded-xl text-apple-text font-semibold text-base" lang="zh-CN">${escHtml(x.o)}</button>`).join('');
+      .map(x => `<button data-ok="${x.ok ? 1 : 0}" onclick="window.answerLessonQ(this)" class="mq-option px-4 py-2 rounded-xl text-apple-text font-semibold text-base"${zhLang(tr(x.o))}>${escHtml(tr(x.o))}</button>`).join('');
     return `<div class="bg-white/60 border border-white/70 rounded-2xl p-4">
       <div class="flex items-center gap-3"><p class="font-semibold text-apple-text text-lg flex-1" lang="zh-CN">${qi + 1}. ${escHtml(qzh)}</p>${sayBtn(qzh)}</div>
       ${st.showPy ? `<p class="font-mono text-xs text-apple-blue mt-1">${escHtml(qpy)}</p>` : ''}
@@ -3609,25 +3689,25 @@ function lessonReadingHTML(L) {
     </div>`;
   }).join('');
   return `<div class="flex flex-wrap items-center gap-2 mb-4">
-      <h4 class="font-bold text-apple-text text-lg w-full sm:w-auto sm:flex-1">${escHtml(r.title)}</h4>
-      <button data-say="${escHtml(r.zh)}" onclick="window.playAudio(this.dataset.say)" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/80 border border-gray-200 text-apple-text">▶ Ascolta</button>
+      <h4 class="font-bold text-apple-text text-lg w-full sm:w-auto sm:flex-1">${escHtml(tr(r.title))}</h4>
+      <button data-say="${escHtml(r.zh)}" onclick="window.playAudio(this.dataset.say)" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-white/80 border border-gray-200 text-apple-text">${t('▶ Ascolta')}</button>
       ${lessonToggles()}
     </div>
     <div class="bg-white/70 border border-white rounded-2xl p-4 sm:p-5 shadow-sm">
       <p class="text-xl leading-loose text-apple-text" lang="zh-CN">${escHtml(r.zh)}</p>
       ${st.showPy ? `<p class="font-mono text-sm text-apple-blue mt-3 leading-relaxed">${escHtml(r.py)}</p>` : ''}
-      ${st.showIt ? `<p class="text-sm text-apple-textsec mt-3 leading-relaxed">${escHtml(r.it)}</p>` : ''}
+      ${st.showIt ? `<p class="text-sm text-apple-textsec mt-3 leading-relaxed">${escHtml(tr(r.it))}</p>` : ''}
     </div>
-    <h4 class="text-xs font-bold uppercase tracking-widest text-apple-textsec mt-6 mb-3">Domande di comprensione</h4>
+    <h4 class="text-xs font-bold uppercase tracking-widest text-apple-textsec mt-6 mb-3">${t('Domande di comprensione')}</h4>
     <div class="space-y-3">${qs}</div>`;
 }
 
 function lessonExtraHTML(L) {
   return L.extra.map(x => `<div class="bg-white/60 border border-white/70 rounded-2xl p-4 sm:p-5 mb-3">
-    <div class="flex items-center gap-2 mb-2"><span class="text-[10px] font-bold uppercase tracking-widest bg-apple-blue text-white px-2 py-1 rounded-full">${escHtml(x.type)}</span><h4 class="font-bold text-apple-text"${zhLang(x.title)}>${escHtml(x.title)}</h4></div>
+    <div class="flex items-center gap-2 mb-2"><span class="text-[10px] font-bold uppercase tracking-widest bg-apple-blue text-white px-2 py-1 rounded-full">${escHtml(tr(x.type))}</span><h4 class="font-bold text-apple-text"${zhLang(x.title)}>${escHtml(tr(x.title))}</h4></div>
     ${x.zh ? `<div class="flex items-start gap-3"><p class="text-xl leading-loose text-apple-text flex-1" lang="zh-CN">${escHtml(x.zh)}</p>${sayBtn(x.zh)}</div>
       <p class="font-mono text-sm text-apple-blue mt-1 leading-relaxed">${escHtml(x.py)}</p>` : ''}
-    <p class="text-sm text-apple-textsec mt-2 leading-relaxed">${escHtml(x.it)}</p>
+    <p class="text-sm text-apple-textsec mt-2 leading-relaxed">${escHtml(tr(x.it))}</p>
   </div>`).join('');
 }
 
@@ -3640,39 +3720,40 @@ window.renderLessonView = function () {
   const nDlg = L.dialogue && L.dialogue.reorder ? dialogueChunks(L.dialogue.lines).length : 0;
   const ls = lessonStats(n, progressTotals());
   const tabs = [
-    ['vocab', `📚 Vocaboli (${words.length})`],
-    ['grammar', n <= 3 ? '🗣️ Pronuncia' : '📐 Grammatica'],
-    L.dialogue && ['dialogue', '💬 Dialogo'],
-    L.reading && ['reading', '📖 Lettura'],
+    ['vocab', t('📚 Vocaboli ({n})', { n: words.length })],
+    ['grammar', t(n <= 3 ? '🗣️ Pronuncia' : '📐 Grammatica')],
+    L.dialogue && ['dialogue', t('💬 Dialogo')],
+    L.reading && ['reading', t('📖 Lettura')],
     L.extra.length && ['extra', '🎵 Extra']
   ].filter(Boolean);
   if (!tabs.some(t => t[0] === st.tab)) st.tab = 'vocab';
   const content = { vocab: () => lessonVocabHTML(words), grammar: () => lessonGrammarHTML(L), dialogue: () => lessonDialogueHTML(L),
                     reading: () => lessonReadingHTML(L), extra: () => lessonExtraHTML(L) }[st.tab]();
   const cur = curLesson();
-  const weakTxt = ls.weak.length ? ` · da rinforzare: ${ls.weak.slice(0, 2).map(([c, [a, b]]) => `${c} (${pctOf(a, b)}%)`).join(', ')}` : '';
+  const weakTxt = ls.weak.length ? t(' · da rinforzare: {list}', { list: ls.weak.slice(0, 2).map(([c, [a, b]]) => `${t(c)} (${pctOf(a, b)}%)`).join(', ') }) : '';
   box.innerHTML = `<div class="bg-white/50 border border-white/60 rounded-3xl p-5 sm:p-6 mb-4">
-      <p class="text-xs font-bold uppercase tracking-widest text-apple-textsec">Lezione ${n} · <span lang="zh-CN">第${n}课</span>${n === cur ? ' · 📍 lezione attuale' : ''}</p>
+      <p class="text-xs font-bold uppercase tracking-widest text-apple-textsec">${t('Lezione {n}', { n })} · <span lang="zh-CN">第${n}课</span>${n === cur ? t(' · 📍 lezione attuale') : ''}</p>
       <div class="flex items-center gap-3 mt-1"><h3 class="text-2xl sm:text-3xl font-extrabold text-apple-text tracking-tight" lang="zh-CN">${escHtml(L.zh)}</h3>${sayBtn(L.zh)}</div>
       <p class="font-mono text-apple-blue mt-1">${escHtml(L.py)}</p>
-      <p class="font-semibold text-apple-text mt-1">${escHtml(L.it)}</p>
-      <p class="text-sm text-apple-textsec mt-1">${escHtml(L.theme)}</p>
+      <p class="font-semibold text-apple-text mt-1">${escHtml(tr(L.it))}</p>
+      <p class="text-sm text-apple-textsec mt-1">${escHtml(tr(L.theme))}</p>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-        <div><p class="text-xs font-semibold text-apple-textsec">📚 Vocaboli imparati: ${ls.known}/${ls.words} (${pctOf(ls.known, ls.words)}%)</p>
+        <div><p class="text-xs font-semibold text-apple-textsec">${t('📚 Vocaboli imparati: {a}/{b} ({p}%)', { a: ls.known, b: ls.words, p: pctOf(ls.known, ls.words) })}</p>
           <div class="h-1.5 bg-gray-200/50 rounded-full mt-1 overflow-hidden"><div class="h-1.5 bg-[#34C759]" style="width:${pctOf(ls.known, ls.words)}%"></div></div></div>
-        <div><p class="text-xs font-semibold text-apple-textsec">✅ Esercizi: ${ls.tot ? `${pctOf(ls.ok, ls.tot)}% giuste su ${ls.tot} risposte` : 'nessuna risposta ancora'}</p>
+        <div><p class="text-xs font-semibold text-apple-textsec">${ls.tot ? t(ls.tot === 1 ? '✅ Esercizi: {p}% giuste su {n} risposta' : '✅ Esercizi: {p}% giuste su {n} risposte', { p: pctOf(ls.ok, ls.tot), n: ls.tot }) : t('✅ Esercizi: nessuna risposta ancora')}</p>
           <div class="h-1.5 bg-gray-200/50 rounded-full mt-1 overflow-hidden"><div class="h-1.5 bg-apple-blue" style="width:${pctOf(ls.ok, ls.tot)}%"></div></div></div>
       </div>
       <div class="flex flex-wrap gap-2 mt-4">
-        ${pillBtn(`window.lessonQuiz(${n}, ${n})`, `📝 Quiz lezione ${n}`, true)}
-        ${n > 1 ? pillBtn(`window.lessonQuiz(1, ${n})`, `🔁 Ripasso 1 → ${n}`) : ''}
+        ${pillBtn(`window.lessonQuiz(${n}, ${n})`, t('📝 Quiz lezione {n}', { n }), true)}
+        ${n > 1 ? pillBtn(`window.lessonQuiz(1, ${n})`, t('🔁 Ripasso 1 → {n}', { n })) : ''}
         ${pillBtn(`window.lessonFlashcards(${n})`, '🗂️ Flashcard')}
-        ${pillBtn(`window.lessonDictation(${n})`, '🎧 Dettato')}
-        ${n !== cur ? pillBtn(`window.setCurrentLesson(${n})`, '📍 Sono arrivato qui') : ''}
+        ${pillBtn(`window.lessonDictation(${n})`, t('🎧 Dettato'))}
+        ${n !== cur ? pillBtn(`window.setCurrentLesson(${n})`, t('📍 Sono arrivato qui')) : ''}
       </div>
-      <p class="text-xs text-apple-textsec mt-3 leading-relaxed">✏️ In questa lezione: ${count(T.cloze)} completamenti · ${count(T.reorder)} frasi da riordinare · ${count(T.qa)} domande · ${nDlg} dialoghi da riordinare · ${L.reading ? L.reading.q.length : 0} domande di lettura, più traduzione, ascolto, pinyin e classificatori generati dai vocaboli${escHtml(weakTxt)}.</p>
+      <p class="text-xs text-apple-textsec mt-3 leading-relaxed">${escHtml(t('✏️ In questa lezione: {a} completamenti · {b} frasi da riordinare · {c} domande · {d} dialoghi da riordinare · {e} domande di lettura, più traduzione, ascolto, pinyin e classificatori generati dai vocaboli{w}.',
+        { a: count(T.cloze), b: count(T.reorder), c: count(T.qa), d: nDlg, e: L.reading ? L.reading.q.length : 0, w: weakTxt }))}</p>
     </div>
-    <div class="flex gap-1 bg-white/40 border border-white/60 p-1 rounded-2xl mb-4 overflow-x-auto" role="tablist" aria-label="Parti della lezione">
+    <div class="flex gap-1 bg-white/40 border border-white/60 p-1 rounded-2xl mb-4 overflow-x-auto" role="tablist" aria-label="${t('Parti della lezione')}">
       ${tabs.map(([id, label]) => `<button role="tab" aria-selected="${id === st.tab}" onclick="window.setLessonTab('${id}')" class="flex-1 whitespace-nowrap px-3 py-2 rounded-xl text-sm font-semibold transition ${id === st.tab ? 'bg-white shadow-sm text-apple-text' : 'text-apple-textsec hover:bg-white/50'}">${label}</button>`).join('')}
     </div>
     <div role="tabpanel">${content}</div>`;
@@ -3686,17 +3767,18 @@ window.renderGrammarSearch = function () {
   if (!q || !window.TONGJI_DATA) { hide(box); box.innerHTML = ''; return; }
   const hits = [];
   window.TONGJI_DATA.lessons.forEach(L => L.grammar.forEach((g, i) => {
-    if (fold([g.t, g.x, ...g.ex.flat()].join(' ')).includes(q)) hits.push({ L, g, i, inTitle: fold(g.t).includes(q) });
+    const hay = [g.t, g.x, tr(g.t), tr(g.x), ...g.ex.flat(), ...g.ex.map(e => tr(e[2]))].join(' ');
+    if (fold(hay).includes(q)) hits.push({ L, g, i, inTitle: fold(g.t + ' ' + tr(g.t)).includes(q) });
   }));
   hits.sort((a, b) => (b.inTitle - a.inTitle) || (a.L.n - b.L.n));
   box.innerHTML = hits.length
-    ? `<p class="text-xs font-semibold text-apple-textsec pl-1">${hits.length} ${hits.length === 1 ? 'punto trovato' : 'punti trovati'}</p>` + hits.slice(0, 40).map(h =>
+    ? `<p class="text-xs font-semibold text-apple-textsec pl-1">${t(hits.length === 1 ? '{n} punto trovato' : '{n} punti trovati', { n: hits.length })}</p>` + hits.slice(0, 40).map(h =>
       `<button onclick="window.openGrammarPoint(${h.L.n}, ${h.i})" class="w-full text-left bg-white/60 hover:bg-white border border-white/70 rounded-2xl p-3 transition">
-        <p class="text-[11px] font-bold uppercase tracking-widest text-apple-textsec">Lezione ${h.L.n} · <span lang="zh-CN">${escHtml(h.L.zh)}</span></p>
-        <p class="font-semibold text-apple-text"${zhLang(h.g.t)}>${escHtml(h.g.t)}</p>
-        <p class="text-sm text-apple-textsec line-clamp-2">${escHtml(h.g.x)}</p>
+        <p class="text-[11px] font-bold uppercase tracking-widest text-apple-textsec">${t('Lezione {n}', { n: h.L.n })} · <span lang="zh-CN">${escHtml(h.L.zh)}</span></p>
+        <p class="font-semibold text-apple-text"${zhLang(h.g.t)}>${escHtml(tr(h.g.t))}</p>
+        <p class="text-sm text-apple-textsec line-clamp-2">${escHtml(tr(h.g.x))}</p>
       </button>`).join('')
-    : '<p class="text-sm text-apple-textsec italic pl-1">Nessun punto di grammatica trovato.</p>';
+    : `<p class="text-sm text-apple-textsec italic pl-1">${t('Nessun punto di grammatica trovato.')}</p>`;
   show(box);
 };
 
@@ -3723,8 +3805,8 @@ function renderTongjiProgress() {
     const ls = lessonStats(L.n, totals), vp = pctOf(ls.known, ls.words), ep = pctOf(ls.ok, ls.tot);
     return `<button onclick="window.openLesson(${L.n}, true)" class="text-left bg-white/60 hover:bg-white border border-white/70 rounded-2xl p-3 transition ${L.n > cur ? 'opacity-70' : ''}">
       <div class="flex justify-between items-baseline gap-2"><span class="font-bold text-apple-text truncate">L${L.n} · <span lang="zh-CN">${escHtml(L.zh)}</span></span>
-        <span class="text-xs font-semibold ${!ls.tot ? 'text-apple-textsec' : ep >= 80 ? 'text-[#34C759]' : ep >= 60 ? 'text-apple-text' : 'text-[#FF3B30]'} whitespace-nowrap">${ls.tot ? `${ep}% giuste` : '—'}</span></div>
-      <p class="text-xs text-apple-textsec mt-1">Vocaboli ${ls.known}/${ls.words} · ${ls.tot} risposte</p>
+        <span class="text-xs font-semibold ${!ls.tot ? 'text-apple-textsec' : ep >= 80 ? 'text-[#34C759]' : ep >= 60 ? 'text-apple-text' : 'text-[#FF3B30]'} whitespace-nowrap">${ls.tot ? t('{p}% giuste', { p: ep }) : '—'}</span></div>
+      <p class="text-xs text-apple-textsec mt-1">${t(ls.tot === 1 ? 'Vocaboli {a}/{b} · {n} risposta' : 'Vocaboli {a}/{b} · {n} risposte', { a: ls.known, b: ls.words, n: ls.tot })}</p>
       <div class="h-1.5 bg-gray-200/50 rounded-full mt-1.5 overflow-hidden"><div class="h-1.5 bg-[#34C759]" style="width:${vp}%"></div></div>
     </button>`;
   }).join('');
@@ -3733,10 +3815,10 @@ function renderTongjiProgress() {
   Object.values(totals).forEach(cats => Object.entries(cats).forEach(([c, [a, b]]) => { const x = byCat[c] = byCat[c] || [0, 0]; x[0] += a; x[1] += b; }));
   const weak = Object.entries(byCat).filter(([, [a, b]]) => b >= 5).sort((x, y) => x[1][0] / x[1][1] - y[1][0] / y[1][1]).slice(0, 4);
   $id('weakPoints').innerHTML = weak.length
-    ? `<p class="text-xs font-bold uppercase tracking-widest text-apple-textsec mb-2">Punti deboli</p><div class="flex flex-wrap gap-2">` + weak.map(([c, [a, b]]) =>
-      `<div class="flex items-center gap-2 bg-white/60 border border-white/70 rounded-xl px-3 py-2"><span class="text-sm font-semibold text-apple-text">${escHtml(c)} · ${pctOf(a, b)}%</span>
-        ${MQ_TRAINABLE.has(c) ? `<button onclick="window.lessonQuiz(1, ${cur}, '${escAttr(c)}')" class="text-xs font-semibold bg-apple-blue hover:bg-apple-bluedark text-white px-2.5 py-1 rounded-full transition">Allena</button>` : ''}</div>`).join('') + '</div>'
-    : '<p class="text-sm text-apple-textsec">Rispondi a qualche esercizio: qui compariranno gli argomenti in cui sbagli di più.</p>';
+    ? `<p class="text-xs font-bold uppercase tracking-widest text-apple-textsec mb-2">${t('Punti deboli')}</p><div class="flex flex-wrap gap-2">` + weak.map(([c, [a, b]]) =>
+      `<div class="flex items-center gap-2 bg-white/60 border border-white/70 rounded-xl px-3 py-2"><span class="text-sm font-semibold text-apple-text">${escHtml(t(c))} · ${pctOf(a, b)}%</span>
+        ${MQ_TRAINABLE.has(c) ? `<button onclick="window.lessonQuiz(1, ${cur}, '${escAttr(c)}')" class="text-xs font-semibold bg-apple-blue hover:bg-apple-bluedark text-white px-2.5 py-1 rounded-full transition">${t('Allena')}</button>` : ''}</div>`).join('') + '</div>'
+    : `<p class="text-sm text-apple-textsec">${t('Rispondi a qualche esercizio: qui compariranno gli argomenti in cui sbagli di più.')}</p>`;
 }
 
 // ─── Dettato (听写) ───────────────────────────────────────────────────────────
@@ -3747,8 +3829,8 @@ function renderDictSetup() {
   const sel = $id('dictLesson'); if (!sel || window.dictState) return;
   const prev = sel.value, vocab = window.getCombinedVocab();
   const lessons = [...new Set(vocab.filter(v => typeof v.lesson === 'number').map(v => v.lesson))].sort((a, b) => a - b);
-  let html = course().hasLessons ? `<option value="upto">Lezioni 1–${curLesson()}</option>` : '';
-  html += '<option value="all">Tutte le lezioni</option>' + lessons.map(l => `<option value="${l}">Lezione ${l}</option>`).join('');
+  let html = course().hasLessons ? `<option value="upto">${t('Lezioni 1–{n}', { n: curLesson() })}</option>` : '';
+  html += `<option value="all">${t('Tutte le lezioni')}</option>` + lessons.map(l => `<option value="${l}">${t('Lezione {n}', { n: l })}</option>`).join('');
   if (vocab.some(v => v.lesson === 'custom')) html += '<option value="custom">Cloud</option>';
   sel.innerHTML = html;
   if (prev && sel.querySelector(`option[value="${prev}"]`)) sel.value = prev;
@@ -3776,7 +3858,7 @@ window.startDictation = function () {
 
 function renderDictItem() {
   const st = window.dictState, v = st.items[st.i];
-  $id('dictProgress').innerText = `Parola ${st.i + 1} / ${st.items.length}`;
+  $id('dictProgress').innerText = t('Parola {a} / {b}', { a: st.i + 1, b: st.items.length });
   $id('dictHintText').innerText = '';
   hide($id('dictFeedback')); hide($id('dictNextBtn')); show($id('dictRevealBtn'));
   st.answered = false; st.mistakes = 0; st.writers = [];
@@ -3790,7 +3872,7 @@ function renderDictItem() {
       div.id = 'dict-char-' + idx;
       div.className = 'dict-box keep-light w-28 h-28 sm:w-32 sm:h-32 border-2 border-gray-200 rounded-2xl bg-white shadow-sm transition';
       div.setAttribute('role', 'img');
-      div.setAttribute('aria-label', `Riquadro ${idx + 1} di ${v.zh.length}: disegna il carattere`);
+      div.setAttribute('aria-label', t('Riquadro {a} di {b}: disegna il carattere', { a: idx + 1, b: v.zh.length }));
       box.appendChild(div);
       st.writers.push(HanziWriter.create(div.id, ch, {
         width: 112, height: 112, padding: 8, showOutline: false, showCharacter: false,
@@ -3816,7 +3898,7 @@ function startDictCharQuiz(idx) {
       if (!window.dictState || window.dictState !== st || st.answered) return;
       st.mistakes += summary.totalMistakes;
       if (idx + 1 < st.writers.length) startDictCharQuiz(idx + 1);
-      else finishDictItem(st.mistakes <= st.writers.length * 2, `Scritto con ${st.mistakes} ${st.mistakes === 1 ? 'errore' : 'errori'} di tratto.`);
+      else finishDictItem(st.mistakes <= st.writers.length * 2, t(st.mistakes === 1 ? 'Scritto con {n} errore di tratto.' : 'Scritto con {n} errori di tratto.', { n: st.mistakes }));
     }
   });
 }
@@ -3840,7 +3922,7 @@ function finishDictItem(ok, note = '') {
   scheduleSave();
   const fb = $id('dictFeedback');
   fb.className = `mt-5 p-4 rounded-2xl text-left border ${ok ? 'bg-[#34C759]/10 border-[#34C759]/20' : 'bg-[#FF3B30]/10 border-[#FF3B30]/20'}`;
-  fb.innerHTML = `<p class="font-bold ${ok ? 'text-[#34C759]' : 'text-[#FF3B30]'}">${ok ? '✓ Giusto!' : '✗ Da ripassare'}</p>
+  fb.innerHTML = `<p class="font-bold ${ok ? 'text-[#34C759]' : 'text-[#FF3B30]'}">${t(ok ? '✓ Giusto!' : '✗ Da ripassare')}</p>
     <p class="mt-1 text-apple-text"><span class="text-3xl font-bold" lang="zh-CN">${escHtml(v.zh)}</span><span class="font-mono text-apple-blue ml-3">${escHtml(v.py)}</span></p>
     <p class="text-sm text-apple-textsec mt-1">${escHtml(getNativeString(v))}${note ? ' · ' + escHtml(note) : ''}</p>`;
   show(fb); hide($id('dictRevealBtn')); show($id('dictNextBtn'));
@@ -3850,7 +3932,7 @@ function finishDictItem(ok, note = '') {
   $id('dictInput').disabled = true;
 }
 
-window.dictReveal = () => finishDictItem(false, 'Soluzione mostrata.');
+window.dictReveal = () => finishDictItem(false, t('Soluzione mostrata.'));
 window.dictSpeak  = () => { const st = window.dictState; if (st) window.playAudio(st.items[st.i].zh); };
 window.dictHint   = type => { const st = window.dictState; if (!st) return; const v = st.items[st.i]; $id('dictHintText').innerText = type === 'py' ? v.py : getNativeString(v); };
 
@@ -3861,8 +3943,8 @@ window.dictCheckKeys = function () {
   if (!ans) return;
   const letters = s => fold(s).replace(/[^a-z]/g, '');
   if (ans === v.zh) finishDictItem(true);
-  else if (letters(ans) && letters(ans) === letters(v.py)) finishDictItem(false, 'Il pinyin è giusto: ora prova a scriverla con i caratteri.');
-  else finishDictItem(false, `Hai scritto: ${ans}`);
+  else if (letters(ans) && letters(ans) === letters(v.py)) finishDictItem(false, t('Il pinyin è giusto: ora prova a scriverla con i caratteri.'));
+  else finishDictItem(false, t('Hai scritto: {a}', { a: ans }));
 };
 
 window.dictNext = function () {
@@ -3876,7 +3958,7 @@ window.endDictation = function (finished) {
   st.writers.forEach(w => { try { w.cancelQuiz(); } catch (e) { /* nulla da annullare */ } });
   window.dictState = null;
   hide($id('dictPlay')); show($id('dictSetup'));
-  if (finished) window.showToast(`Dettato finito: ${st.correct}/${st.items.length} giuste`, 'success');
+  if (finished) window.showToast(t('Dettato finito: {a}/{b} giuste', { a: st.correct, b: st.items.length }), 'success');
   window.saveToLocal(); window.refreshUI();
 };
 
@@ -3903,13 +3985,13 @@ window.refreshSyncStatus = function (message) {
   const input = $id('syncTokenInput'), status = $id('syncStatus'); if (!input || !status) return;
   const hasToken = !!lsGet(SYNC_TOKEN_KEY);
   input.value = '';
-  input.placeholder = hasToken ? '•••• token salvato (lascia vuoto per non cambiarlo)' : 'github_pat_…';
+  input.placeholder = hasToken ? t('•••• token salvato (lascia vuoto per non cambiarlo)') : 'github_pat_…';
   $id('syncAuto').checked = !!lsGet(SYNC_AUTO_KEY);
   const last = window.currentUser ? parseInt(lsGet('studioCinese_lastSync_' + window.currentUser)) : 0;
-  const lastTxt = last ? ` Ultima sincronizzazione: ${new Date(last).toLocaleString()}.` : '';
-  status.innerHTML = message ? escHtml(message)
-    : hasToken ? `✅ Token salvato su questo dispositivo.${lastTxt} <button onclick="window.clearSyncToken()" class="underline hover:text-apple-text">Rimuovi</button>`
-    : 'Nessun token: i progressi restano solo su questo dispositivo (puoi sempre usare Esporta/Importa Backup).';
+  const lastTxt = last ? t(' Ultima sincronizzazione: {d}.', { d: new Date(last).toLocaleString(isEn() ? 'en-GB' : 'it-IT') }) : '';
+  status.innerHTML = message ? escHtml(t(message))
+    : hasToken ? `✅ ${t('Token salvato su questo dispositivo.')}${lastTxt} <button onclick="window.clearSyncToken()" class="underline hover:text-apple-text">${t('Rimuovi')}</button>`
+    : t('Nessun token: i progressi restano solo su questo dispositivo (puoi sempre usare Esporta/Importa Backup).');
 };
 
 async function ghApi(path, opts = {}) {
@@ -4030,7 +4112,7 @@ window.syncNow = async function (silent = false) {
       : e.message === 'NO_TOKEN' ? 'Inserisci e salva prima il token GitHub.'
       : 'Sincronizzazione non riuscita: controlla la connessione e riprova.';
     console.error('Sincronizzazione', e);
-    window.refreshSyncStatus('⚠️ ' + msg);
+    window.refreshSyncStatus('⚠️ ' + t(msg));
     if (!silent) window.showToast(msg, 'error');
   } finally {
     syncBusy = false;

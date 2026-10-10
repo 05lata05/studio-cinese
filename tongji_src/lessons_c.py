@@ -186,7 +186,7 @@ S|一样|yíyàng|形|uguale|same
   cloze=[
     ("我去 ___ 长城。", "Wǒ qù ___ Chángchéng.", "Sono stato alla Grande Muraglia.", ["过", "着", "的", "吗"], "V + 过 = esperienza."),
     ("寒假有 ___ 长时间？", "Hánjià yǒu ___ cháng shíjiān?", "Quanto durano le vacanze invernali?", ["多", "几", "什么", "怎么"], "多 + aggettivo = quanto…?"),
-    ("___ 放寒假，放一个月。(a gennaio)", "___ fàng hánjià, fàng yí ge yuè.", "A gennaio iniziano le vacanze invernali, che durano un mese.", ["一月", "一个月", "第一月", "每月"], "一月 = gennaio; 一个月 = un mese."),
+    ("___ 放寒假，放一个月。", "___ fàng hánjià, fàng yí ge yuè.", "A gennaio iniziano le vacanze invernali, che durano un mese.", ["一月", "一个月", "第一月", "每月"], "一月 = gennaio; 一个月 = un mese."),
     ("这是我 ___ 一次来中国。", "Zhè shì wǒ ___ yī cì lái Zhōngguó.", "È la prima volta che vengo in Cina.", ["第", "每", "只", "太"], "第 + numero = ordinale."),
     ("我 ___ 天都有课。", "Wǒ ___ tiān dōu yǒu kè.", "Ho lezione tutti i giorni.", ["每", "第", "只", "多"], "每天 = ogni giorno."),
     ("我们班的学生太多 ___。", "Wǒmen bān de xuésheng tài duō ___.", "Nella nostra classe ci sono troppi studenti.", ["了", "过", "着", "吗"], "太……了."),
@@ -302,7 +302,7 @@ S|路口|lùkǒu|名|incrocio|crossroads
     ("不远，走五分钟就 ___ 了。", "Bù yuǎn, zǒu wǔ fēnzhōng jiù ___ le.", "Non è lontano, in cinque minuti ci sei.", ["到", "走", "去", "往"], "到 = arrivare."),
     ("我不 ___，你问问别人吧。", "Wǒ bù ___, nǐ wènwen biéren ba.", "Non lo so con precisione, chiedi a qualcun altro.", ["清楚", "远", "近", "客气"], "不清楚 = non lo so di preciso."),
     ("牙科在二 ___。", "Yákē zài èr ___.", "Il dentista è al secondo piano.", ["层", "边", "分钟", "路口"], "层 = piano."),
-    ("___，请问银行在哪儿？(a un signore)", "___, qǐngwèn yínháng zài nǎr?", "Scusi signore, dov’è la banca?", ["先生", "同学", "大夫", "阿姨"], "先生 = signore."),
+    ("___，请问银行在哪儿？", "___, qǐngwèn yínháng zài nǎr?", "Scusi signore, dov’è la banca?", ["先生", "同学", "大夫", "阿姨"], "先生 = signore."),
     ("太谢谢你 ___！", "Tài xièxie nǐ ___!", "Grazie mille!", ["了", "的", "过", "着"], "太……了."),
   ],
   reorder=[

@@ -520,7 +520,7 @@ S|酒|jiǔ|名|alcolico, vino|alcohol
     ("你干什么 ___？", "Nǐ gàn shénme ___?", "Che cosa stai facendo?", ["呢", "吗", "着", "很"], "呢 a fine frase = azione in corso."),
     ("他听 ___ 音乐做作业。", "Tā tīng ___ yīnyuè zuò zuòyè.", "Fa i compiti ascoltando musica.", ["着", "了", "过", "的"], "V1 + 着 + V2: due azioni contemporanee."),
     ("我 ___ 想家。", "Wǒ ___ xiǎng jiā.", "Ho un po’ di nostalgia di casa.", ["有点儿", "一点儿", "一会儿", "一下"], "有点儿 + verbo/aggettivo, per qualcosa di negativo."),
-    ("___ 一起去吃饭吧！(io e te)", "___ yìqǐ qù chī fàn ba!", "Andiamo a mangiare insieme!", ["咱们", "他们", "你们", "她们"], "咱们 include chi ascolta."),
+    ("___ 一起去吃饭吧！", "___ yìqǐ qù chī fàn ba!", "Andiamo a mangiare insieme, io e te!", ["咱们", "他们", "你们", "她们"], "咱们 include chi ascolta."),
     ("你 ___ 不太高兴。", "Nǐ ___ bú tài gāoxìng.", "Sembri un po’ giù.", ["好像", "当然", "可是", "为什么"], "好像 = sembrare."),
     ("我 ___ 他是好学生。", "Wǒ ___ tā shì hǎo xuésheng.", "Secondo me è un bravo studente.", ["觉得", "好像", "当然", "可是"], "觉得 = ritenere, pensare."),
     ("你能回答这个问题吗？——___！", "Nǐ néng huídá zhège wèntí ma? — ___!", "Sai rispondere a questa domanda? — Certo!", ["当然", "可是", "好像", "为什么"], "当然 = certo, naturalmente."),
