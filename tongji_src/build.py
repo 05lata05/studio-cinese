@@ -35,6 +35,17 @@ for name in MODULES:
         lessons += importlib.import_module(name).LESSONS
 lessons.sort(key=lambda l: l["n"])
 
+# Esercizi aggiuntivi (extra_quiz.py): si sommano a quelli della lezione
+if os.path.exists(os.path.join(HERE, "extra_quiz.py")):
+    by_n = {l["n"]: l for l in lessons}
+    for n, kinds in importlib.import_module("extra_quiz").EXTRA.items():
+        if n not in by_n:
+            err("extra_quiz: la lezione %d non esiste" % n); continue
+        for kind, items in kinds.items():
+            if kind not in ("cloze", "reorder", "qa"):
+                err("extra_quiz L%d: tipo %r non valido" % (n, kind)); continue
+            by_n[n][kind] = list(by_n[n].get(kind, [])) + list(items)
+
 out = {"title": common.COURSE_TITLE,
        "characters": [list(c) for c in common.CHARACTERS],
        "lessons": [], "vocab": [], "cloze": [], "reorder": [], "qa": [], "measure": [],
@@ -131,6 +142,15 @@ for les in lessons:
     out["lessons"].append({"n": n, "zh": les["zh"], "py": les["py"], "it": les["it"],
                            "theme": les.get("theme", ""), "grammar": gram,
                            "dialogue": dlg, "reading": rd, "extra": extra})
+
+# ── niente esercizi doppi (stessa frase da completare o da riordinare, stessa domanda con la stessa risposta) ──
+for kind, key in (("cloze", lambda x: x[1]), ("reorder", lambda x: x[1]), ("qa", lambda x: (x[1], x[3][0]))):
+    seen_ex = {}
+    for x in out[kind]:
+        k = key(x)
+        if k in seen_ex:
+            err("%s doppio in L%d e L%d: %s" % (kind, seen_ex[k], x[0], k))
+        seen_ex[k] = x[0]
 
 # ── classificatori: solo nomi presenti nel vocabolario ──
 vocab_zh = {v[2] for v in out["vocab"]}

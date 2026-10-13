@@ -3,7 +3,7 @@
 // Copre sia i file del sito sia gli script CDN esterni (Tailwind, HanziWriter), cosi' l'app
 // funziona anche offline una volta aperta la prima volta.
 
-const CACHE_NAME = 'studio-cinese-v5'; // aumentare (v2, v3, ...) ad ogni aggiornamento dei file
+const CACHE_NAME = 'studio-cinese-v6'; // aumentare (v2, v3, ...) ad ogni aggiornamento dei file
 
 const APP_SHELL = [
   './',

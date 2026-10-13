@@ -305,7 +305,6 @@ window.I18N_EN = {
   "🔁 Ripasso 1 → {n}": "🔁 Review 1 → {n}",
   "🎧 Dettato": "🎧 Dictation",
   "📍 Sono arrivato qui": "📍 I’ve reached this lesson",
-  "✏️ In questa lezione: {a} completamenti · {b} frasi da riordinare · {c} domande · {d} dialoghi da riordinare · {e} domande di lettura, più traduzione, ascolto, pinyin e classificatori generati dai vocaboli{w}.": "✏️ In this lesson: {a} fill-in-the-blanks · {b} sentences to reorder · {c} questions · {d} dialogues to reorder · {e} reading questions, plus translation, listening, pinyin and measure-word exercises generated from the vocabulary{w}.",
   "Parti della lezione": "Parts of the lesson",
   "{n} punto trovato": "{n} point found",
   "{n} punti trovati": "{n} points found",
@@ -429,5 +428,13 @@ window.I18N_EN = {
   "Token non valido, scaduto o senza il permesso “Gists: Read and write”.": "Invalid or expired token, or missing the “Gists: Read and write” permission.",
   "Sincronizzazione non riuscita: controlla la connessione e riprova.": "Sync failed: check your connection and try again.",
   "✅ Esercizi: {p}% giuste su {n} risposta": "✅ Exercises: {p}% right out of {n} answer",
-  "Vocaboli {a}/{b} · {n} risposta": "Words {a}/{b} · {n} answer"
+  "Vocaboli {a}/{b} · {n} risposta": "Words {a}/{b} · {n} answer",
+  "✏️ In questa lezione: {a} completamenti · {b} frasi da riordinare · {c} domande · {d} dialoghi da riordinare · {e} domande di lettura · {f} frasi da capire, più traduzione, ascolto, pinyin, caratteri mancanti e classificatori generati dai vocaboli{w}.": "✏️ In this lesson: {a} fill-in-the-blanks · {b} sentences to reorder · {c} questions · {d} dialogues to reorder · {e} reading questions · {f} sentences to understand, plus translation, listening, pinyin, missing-character and measure-word exercises generated from the vocabulary{w}.",
+  "Significato delle frasi (dialoghi e grammatica)": "Sentence meaning (dialogues and grammar)",
+  "Caratteri mancanti": "Missing characters",
+  "Significato Frasi": "Sentence meaning",
+  "Caratteri": "Characters",
+  "Che cosa significa questa frase?": "What does this sentence mean?",
+  "Come si dice in cinese questa frase?": "How do you say this sentence in Chinese?",
+  "Carattere mancante: completa la parola \"{m}\"": "Missing character: complete the word \"{m}\""
 };

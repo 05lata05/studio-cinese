@@ -442,17 +442,18 @@
         <button onclick="window.startMistakesReview()" id="mqMistakesBtn" class="w-full mt-3 bg-white/80 hover:bg-white text-apple-text border border-gray-200 font-semibold py-3.5 rounded-2xl shadow-sm transition">🔁 Ripeti gli errori</button>
       </div>
 
-      <div id="megaQuizPlayPanel" class="hidden bg-white/60 backdrop-blur-xl p-8 rounded-3xl shadow-lg border border-white max-w-3xl mx-auto">
-        <div class="flex justify-between items-center mb-8 text-apple-textsec font-medium border-b border-gray-200/50 pb-4">
-          <span id="mqProgress" class="text-sm font-semibold text-apple-text">Domanda 1 / 10</span>
-          <span id="mqCategoryDisplay" class="bg-white/80 border border-gray-200 px-3 py-1 rounded-full text-xs uppercase tracking-wider font-semibold">Grammatica</span>
-          <button onclick="window.endMegaQuiz(false)" class="text-sm bg-gray-200/50 hover:bg-gray-200 px-3 py-1 rounded-full text-apple-text transition">Termina</button>
+      <div id="megaQuizPlayPanel" class="hidden bg-white/60 backdrop-blur-xl p-5 sm:p-8 rounded-3xl shadow-lg border border-white max-w-3xl mx-auto">
+        <div class="flex justify-between items-center gap-2 mb-6 sm:mb-8 text-apple-textsec font-medium border-b border-gray-200/50 pb-4">
+          <span id="mqProgress" class="text-sm font-semibold text-apple-text whitespace-nowrap shrink-0">Domanda 1 / 10</span>
+          <span id="mqCategoryDisplay" class="bg-white/80 border border-gray-200 px-3 py-1 rounded-full text-xs uppercase tracking-wider font-semibold text-center min-w-0">Grammatica</span>
+          <button onclick="window.endMegaQuiz(false)" class="text-sm bg-gray-200/50 hover:bg-gray-200 px-3 py-1 rounded-full text-apple-text transition shrink-0">Termina</button>
         </div>
-        <div class="mb-10 text-center relative">
-          <!-- Audio Button for Stories -->
-          <button id="mqAudioBtn" onclick="window.playAudio(window.megaQuizState.currentAudioText)" class="hidden absolute -top-4 right-0 p-3 bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition shadow-sm text-xl" title="Ascolta Testo">🔊</button>
-          
-          <h2 id="mqQuestionText" class="text-2xl font-bold text-apple-text mb-4 leading-relaxed tracking-tight whitespace-pre-line text-left">Domanda qui...</h2>
+        <div class="mb-8 sm:mb-10 text-center">
+          <!-- Domanda e pulsante audio affiancati: il pulsante non copre mai il testo -->
+          <div class="flex items-start gap-3 mb-4">
+            <h2 id="mqQuestionText" class="flex-1 min-w-0 text-xl sm:text-2xl font-bold text-apple-text leading-relaxed tracking-tight whitespace-pre-line text-left break-words">Domanda qui...</h2>
+            <button id="mqAudioBtn" onclick="window.playAudio(window.megaQuizState.currentAudioText)" class="hidden shrink-0 w-12 h-12 flex items-center justify-center bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition shadow-sm text-xl" title="Ascolta Testo" aria-label="Ascolta Testo">🔊</button>
+          </div>
           <div id="mqHintContainer" class="hidden mt-4">
             <button onclick="document.getElementById('mqHintText').classList.toggle('hidden')" class="px-4 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-full text-sm font-medium text-apple-text transition">💡 Mostra Pinyin</button>
             <p id="mqHintText" class="hidden mt-4 text-lg font-mono text-apple-textsec transition-all whitespace-pre-line text-left bg-white/50 p-4 rounded-xl border border-gray-200"></p>
@@ -1626,7 +1627,8 @@ const POLIMI_MQ_CATEGORIES = [
 const TONGJI_MQ_CATEGORIES = [
   ['all', 'Tutti (Mix bilanciato)'], ['Completamento', 'Completamento (Buchi)'], ['Riordina Frasi', 'Riordina Frasi'],
   ['Riordina Dialogo', 'Riordina Dialogo (testi delle lezioni)'], ['Domanda/Risposta', 'Domande e Risposte'], ['Lettura', 'Lettura e Comprensione'],
-  ['Traduzione Mix', 'Traduzione (Cin ⇄ Ita)'], ['Ascolto', 'Ascolto (🔊 → significato)'], ['Pinyin e toni', 'Pinyin e toni'], ['Classificatori', 'Classificatori (量词)']
+  ['Significato Frasi', 'Significato delle frasi (dialoghi e grammatica)'], ['Traduzione Mix', 'Traduzione (Cin ⇄ Ita)'], ['Ascolto', 'Ascolto (🔊 → significato)'],
+  ['Pinyin e toni', 'Pinyin e toni'], ['Caratteri', 'Caratteri mancanti'], ['Classificatori', 'Classificatori (量词)']
 ];
 
 let tongjiVocabCache = null;
@@ -1802,6 +1804,7 @@ function getStoragePayload() {
     srs: window.srsData,
     prog: window.lessonProgress,
     mistakes: window.megaMistakes,
+    seen: window.mqSeen,
     updatedAt: Date.now()
   };
 }
@@ -1815,6 +1818,7 @@ function applyStoragePayload(data = {}) {
   window.srsData                   = data.srs      || {};
   window.lessonProgress            = data.prog     || {};
   window.megaMistakes              = data.mistakes || {};
+  window.mqSeen                    = (data.seen && data.seen.s) ? data.seen : { n: 0, s: {} };
 }
 
 const HISTORY_CAP = 200; // quiz conservati nello storico (i più recenti)
@@ -1823,7 +1827,7 @@ window.saveToLocal = function () {
   if (!window.currentUser) return;
   window.quizHistoryData.splice(HISTORY_CAP);
   window.megaQuizHistoryData.splice(HISTORY_CAP);
-  pruneMistakes();
+  pruneMistakes(); pruneSeen();
   const key = getUserKey();
   try { localStorage.setItem(key, JSON.stringify(getStoragePayload())); }
   catch (e) {
@@ -1987,6 +1991,50 @@ function pruneMistakes() {
   Object.entries(m).filter(([, x]) => !x.done).sort((a, b) => b[1].t - a[1].t).slice(150).forEach(([id]) => delete m[id]);
 }
 
+// ─── Domande già viste ───────────────────────────────────────────────────────
+// n = quiz avviati finora; s = { codice domanda: numero del quiz in cui è uscita l'ultima volta }
+window.mqSeen = { n: 0, s: {} };
+const SEEN_KEEP = 60; // dopo 60 quiz una domanda torna "nuova"
+function seenId(q) { // codice breve e stabile (FNV-1a) ricavato dall'id della domanda
+  const str = qid(q); let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return (h >>> 0).toString(36);
+}
+function markSeen(q) { window.mqSeen.s[seenId(q)] = window.mqSeen.n; }
+function pruneSeen() {
+  const S = window.mqSeen;
+  Object.keys(S.s).forEach(k => { if (S.n - S.s[k] > SEEN_KEEP) delete S.s[k]; });
+}
+
+// Sceglie le domande del quiz: prima quelle mai uscite, poi quelle uscite da più quiz; un po' di caso
+// evita che l'ordine sia sempre lo stesso. Se possibile, una sola domanda per vocabolo.
+function pickQuizQuestions(pool, amount, balanced) {
+  const S = window.mqSeen, n = Math.min(amount, pool.length);
+  const age = q => { const v = S.s[seenId(q)]; return v == null ? SEEN_KEEP + 1 : Math.min(SEEN_KEEP, S.n - v); };
+  // ordinate dalla più "fresca"; il caso mescola solo domande viste lo stesso numero di quiz fa
+  let ordered = pool.map(q => [age(q) + Math.random() * 0.9, q]).sort((a, b) => b[0] - a[0]).map(x => x[1]);
+  if (balanced) { // mix bilanciato: a ogni giro una domanda per argomento...
+    const roundRobin = list => {
+      const groups = {}, out = [];
+      list.forEach(q => (groups[q.c] = groups[q.c] || []).push(q));
+      const lists = Object.values(groups);
+      while (lists.some(l => l.length)) shuffle(lists.filter(l => l.length)).forEach(l => out.push(l.shift()));
+      return out;
+    };
+    // ...ma le domande uscite negli ultimi 3 quiz passano in fondo, anche se il loro argomento ne ha poche
+    ordered = [...roundRobin(ordered.filter(q => age(q) >= 3)), ...roundRobin(ordered.filter(q => age(q) < 3))];
+  }
+  const out = [], later = [], usedWords = new Set();
+  for (const q of ordered) {
+    if (out.length >= n) break;
+    if (q.vkey && usedWords.has(q.vkey)) { later.push(q); continue; }
+    if (q.vkey) usedWords.add(q.vkey);
+    out.push(q);
+  }
+  out.push(...later.slice(0, n - out.length));
+  return shuffle(out);
+}
+
 // Le opzioni vengono rimescolate ogni volta che una domanda viene riproposta
 function reshuffleQuestion(q) {
   const c = JSON.parse(JSON.stringify(q));
@@ -2017,6 +2065,7 @@ function onQuizAnswer(q, ok) {
   if (q.vkey) srsRecord(q.vkey, ok);
   if (q.les) recordProgress(q.les, q.c, ok);
   trackMistake(q, ok);
+  markSeen(q);
   scheduleSave();
 }
 
@@ -2351,6 +2400,47 @@ function dialogueChunks(lines) {
   return chunks.filter(c => c.length >= 3);
 }
 
+// Frasi delle lezioni (battute dei dialoghi, esempi di grammatica, frasi da riordinare), senza doppioni
+const HAN_RE = /[\u3400-\u9fff]/g;
+function tongjiSentences(from, to) {
+  const T = window.TONGJI_DATA, out = [], seen = new Set();
+  const add = (n, zh, py, it, minHan) => {
+    if (!zh || !it || seen.has(zh) || (zh.match(HAN_RE) || []).length < minHan) return;
+    if (/[\/·→]/.test(zh + py + it) || /[\u3400-\u9fff]\s+[\u3400-\u9fff]/.test(zh)) return; // elenchi di parole, non frasi
+    seen.add(zh); out.push({ n, zh, py, it });
+  };
+  T.lessons.forEach(L => {
+    if (L.n < from || L.n > to) return;
+    (L.dialogue ? L.dialogue.lines : []).forEach(l => add(L.n, l[2], l[3], l[4], 2));
+    L.grammar.forEach(g => g.ex.forEach(([zh, py, it]) => add(L.n, zh, py, it, 3)));
+  });
+  T.reorder.forEach(([n, zh, py, it]) => { if (n >= from && n <= to) add(n, zh, py, it, 3); });
+  return out;
+}
+
+// "Che cosa significa questa frase?" / "Come si dice in cinese?": le opzioni sbagliate sono altre frasi del corso
+function sentenceQuestions(from, to) {
+  const inR = tongjiSentences(from, to);
+  const pool = inR.length >= 8 ? inR : tongjiSentences(1, Math.max(to, 4));
+  const out = [];
+  inR.forEach(s => {
+    const m = tr(s.it), ds = [];
+    // prima le frasi della stessa lezione (più simili), poi le altre
+    const others = shuffle(pool.filter(o => o.zh !== s.zh && tr(o.it) !== m)).sort((a, b) => (b.n === s.n) - (a.n === s.n));
+    for (const o of others) { if (ds.length === 3) break; if (!ds.some(d => d.zh === o.zh || tr(d.it) === tr(o.it))) ds.push(o); }
+    if (ds.length < 3) return;
+    const e = { it: `${s.zh}\n${s.py}\n= "${m}"` };
+    if (Math.random() < 0.5) {
+      out.push({ les: s.n, c: 'Significato Frasi', q: { it: `${t('Che cosa significa questa frase?')}\n\n${s.zh}` },
+        ...mcOptions([m, ...ds.map(d => tr(d.it))]), e, pyHint: s.py, audioText: s.zh });
+    } else {
+      out.push({ les: s.n, c: 'Significato Frasi', q: { it: `${t('Come si dice in cinese questa frase?')}\n\n"${m}"` },
+        ...mcOptions([s.zh, ...ds.map(d => d.zh)]), e, pyHint: null, audioText: '' });
+    }
+  });
+  return out;
+}
+
 function buildTongjiQuiz(from = 1, to = maxLesson()) {
   const T = window.TONGJI_DATA; if (!T) return [];
   const inR = n => n >= from && n <= to;
@@ -2391,7 +2481,11 @@ function buildTongjiQuiz(from = 1, to = maxLesson()) {
     });
   });
 
+  out.push(...sentenceQuestions(from, to));
+
   const nat = getNativeString;
+  const allZh = new Set(allVocab.map(v => v.zh));
+  const charPool = new Set(distractorPool.flatMap(v => [...v.zh]).filter(c => /[\u3400-\u9fff]/.test(c)));
   vocab.forEach(v => {
     const k = wkey(v); // ogni risposta su un vocabolo aggiorna anche il ripasso intelligente
     if (Math.random() < 0.5) {
@@ -2404,6 +2498,18 @@ function buildTongjiQuiz(from = 1, to = maxLesson()) {
     out.push({ les: v.lesson, vkey: k, c: 'Ascolto', q: { it: t('Ascolto: premi 🔊 (in alto a destra) e scegli il significato giusto.') },
       ...mcOptions([nat(v), ...pickDistractors(v, distractorPool, nat)]),
       e: { it: t('Hai sentito {zh} ({py}) = "{m}".', { zh: v.zh, py: v.py, m: nat(v) }) }, pyHint: v.py, audioText: v.zh, autoPlay: true });
+    // Carattere mancante: una sillaba della parola va scelta fra 4 caratteri (nessuna alternativa forma un'altra parola del corso)
+    const chars = [...v.zh];
+    if (chars.length >= 2 && chars.every(c => /[\u3400-\u9fff]/.test(c)) && new Set(chars).size === chars.length) {
+      const i = Math.floor(Math.random() * chars.length), wrongC = [];
+      for (const c of shuffle([...charPool])) {
+        if (wrongC.length === 3) break;
+        if (!chars.includes(c) && !allZh.has(chars.map((x, j) => (j === i ? c : x)).join(''))) wrongC.push(c);
+      }
+      if (wrongC.length === 3) out.push({ les: v.lesson, vkey: k, c: 'Caratteri',
+        q: { it: `${t('Carattere mancante: completa la parola "{m}"', { m: nat(v) })}\n\n${chars.map((x, j) => (j === i ? ' ___ ' : x)).join('').trim()}` },
+        ...mcOptions([chars[i], ...wrongC]), e: { it: t('{zh} ({py}) significa "{m}".', { zh: v.zh, py: v.py, m: nat(v) }) }, pyHint: v.py, audioText: v.zh });
+    }
     const wrong = toneDistractors(v.py);
     if (wrong.length === 3) out.push({ les: v.lesson, vkey: k, c: 'Pinyin e toni', q: { it: `${t('Pinyin e toni: come si legge "{zh}"?', { zh: v.zh })}\n(${nat(v)})` },
       ...mcOptions([v.py, ...wrong]), e: { it: t('{zh} si legge {py}.', { zh: v.zh, py: v.py }) }, pyHint: null, audioText: v.zh });
@@ -2417,16 +2523,6 @@ function buildTongjiQuiz(from = 1, to = maxLesson()) {
       ...mcOptions([mws[0], ...shuffle(T.mwPool.filter(m => !mws.includes(m))).slice(0, 3)]),
       e: { it: t('Con {noun} si usa {mws}.', { noun, mws: mws.join(' / ') }) }, pyHint: v.py, audioText: '' });
   });
-  return out;
-}
-
-// Mix bilanciato: a ogni giro una domanda per argomento, così i vocaboli non coprono tutto il resto
-function interleaveByCategory(pool) {
-  const groups = {};
-  pool.forEach(q => (groups[q.c] = groups[q.c] || []).push(q));
-  const lists = Object.values(groups).map(g => shuffle(g));
-  const out = [];
-  while (out.length < pool.length) shuffle(lists.filter(l => l.length)).forEach(l => out.push(l.pop()));
   return out;
 }
 
@@ -2931,13 +3027,14 @@ window.startMegaQuiz = function () {
   let pool = range ? window.expandGrammarDB(range[0], range[1]) : window.expandGrammarDB();
   if (cat !== 'all') pool = pool.filter(q => q.c === cat || q.c.includes(cat));
   if (pool.length === 0) { window.showToast('Nessuna domanda trovata.', 'error'); return; }
-  pool = (range && cat === 'all') ? interleaveByCategory(pool) : shuffle(pool);
+  pool = pickQuizQuestions(pool, amount, !!range && cat === 'all');
   const catLabel = (course().mqCategories.find(c => c[0] === cat) || [cat, cat])[1]; // in italiano: lo storico si traduce quando viene mostrato
-  startMegaQuizWith(pool.slice(0, amount), range ? `${catLabel} · L${range[0]}${range[1] !== range[0] ? '–' + range[1] : ''}` : cat);
+  startMegaQuizWith(pool, range ? `${catLabel} · L${range[0]}${range[1] !== range[0] ? '–' + range[1] : ''}` : cat);
 };
 
 // Avvia il Mega-Quiz con domande già pronte (quiz normale, errori da ripetere, esercizi dell'AI)
 function startMegaQuizWith(questions, label) {
+  window.mqSeen.n++;
   window.megaQuizState = {
     active: true,
     questions,
@@ -3750,8 +3847,8 @@ window.renderLessonView = function () {
         ${pillBtn(`window.lessonDictation(${n})`, t('🎧 Dettato'))}
         ${n !== cur ? pillBtn(`window.setCurrentLesson(${n})`, t('📍 Sono arrivato qui')) : ''}
       </div>
-      <p class="text-xs text-apple-textsec mt-3 leading-relaxed">${escHtml(t('✏️ In questa lezione: {a} completamenti · {b} frasi da riordinare · {c} domande · {d} dialoghi da riordinare · {e} domande di lettura, più traduzione, ascolto, pinyin e classificatori generati dai vocaboli{w}.',
-        { a: count(T.cloze), b: count(T.reorder), c: count(T.qa), d: nDlg, e: L.reading ? L.reading.q.length : 0, w: weakTxt }))}</p>
+      <p class="text-xs text-apple-textsec mt-3 leading-relaxed">${escHtml(t('✏️ In questa lezione: {a} completamenti · {b} frasi da riordinare · {c} domande · {d} dialoghi da riordinare · {e} domande di lettura · {f} frasi da capire, più traduzione, ascolto, pinyin, caratteri mancanti e classificatori generati dai vocaboli{w}.',
+        { a: count(T.cloze), b: count(T.reorder), c: count(T.qa), d: nDlg, e: L.reading ? L.reading.q.length : 0, f: tongjiSentences(n, n).length, w: weakTxt }))}</p>
     </div>
     <div class="flex gap-1 bg-white/40 border border-white/60 p-1 rounded-2xl mb-4 overflow-x-auto" role="tablist" aria-label="${t('Parti della lezione')}">
       ${tabs.map(([id, label]) => `<button role="tab" aria-selected="${id === st.tab}" onclick="window.setLessonTab('${id}')" class="flex-1 whitespace-nowrap px-3 py-2 rounded-xl text-sm font-semibold transition ${id === st.tab ? 'bg-white shadow-sm text-apple-text' : 'text-apple-textsec hover:bg-white/50'}">${label}</button>`).join('')}
@@ -4051,6 +4148,12 @@ function mergeDevices(a = {}, b = {}, size) { const out = { ...a }; Object.entri
 const progSize = dev => Object.values(dev || {}).reduce((s, cats) => s + Object.values(cats).reduce((t, c) => t + c[1], 0), 0);
 const daysSize = dev => Object.values(dev || {}).reduce((s, n) => s + n, 0);
 
+function mergeSeen(a, b) { // domande viste: per ognuna l'ultimo quiz in cui è uscita
+  const A = (a && a.s) ? a : { n: 0, s: {} }, B = (b && b.s) ? b : { n: 0, s: {} }, s = { ...A.s };
+  Object.entries(B.s).forEach(([k, v]) => { if (!(k in s) || v > s[k]) s[k] = v; });
+  return { n: Math.max(A.n, B.n), s };
+}
+
 function mergeCourse(a, b) {
   if (!a) return b || null; if (!b) return a;
   const vocab = [...(a.vocab || [])];
@@ -4061,7 +4164,7 @@ function mergeCourse(a, b) {
     quiz: mergeHistory(a.quiz, b.quiz), mega: mergeHistory(a.mega, b.mega),
     overrides: { ...(b.overrides || {}), ...(a.overrides || {}) },
     settings: (sb._t || 0) > (sa._t || 0) ? sb : sa,
-    srs: mergeKeyed(a.srs, b.srs), mistakes: mergeKeyed(a.mistakes, b.mistakes),
+    srs: mergeKeyed(a.srs, b.srs), mistakes: mergeKeyed(a.mistakes, b.mistakes), seen: mergeSeen(a.seen, b.seen),
     prog: mergeDevices(a.prog, b.prog, progSize),
     updatedAt: Math.max(a.updatedAt || 0, b.updatedAt || 0)
   };
